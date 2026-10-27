@@ -14,7 +14,7 @@ import { EASE, SpeedBlur, bezier, mix, ramp } from '../lib/Polish';
 import { C, rgba } from '../lib/Brand';
 import layout from '../layout.json';
 
-export const CALC_FLYOVER_DURATION = 230;
+export const CALC_FLYOVER_DURATION = 261;
 const L = layout.calc;
 const PAGE_H = L.pageH;
 
@@ -34,19 +34,19 @@ const TARGETS = [
   { x: bar.x + bar.w * 0.62, y: bar.y + bar.h / 2 },
 ];
 const CAMS = [
-  { x: 960, y: 560, s: 1.0 },
+  { x: 960, y: 540, s: 1.0 },
   { x: 730, y: 1150, s: 1.9 },
   { x: 730, y: 1460, s: 1.9 },
   { x: 1387, y: 372, s: 2.0 },
   { x: 1387, y: 760, s: 2.0 },
 ];
 const END = { x: 960, y: 820, s: 0.86 };
-// clicks land on the music grid: 125 BPM = 14.4 f/beat, a click every 3 beats (43.2 f)
-const LEG0 = 21;
-const LEG = 43.2;
+// clicks land on the music grid: 124 BPM = 14.516 f/beat, a click every 3 beats (43.55 f)
+const LEG0 = 21.55;
+const LEG = 43.55;
 const legStart = (k: number) => LEG0 + k * LEG;
 const clickAt = (k: number) => legStart(k) + 22;
-const BACK = 192;
+const BACK = 204; // stop 4 settles ~30f before the pull-back; overview then holds ~33f
 const CAM_EASE = bezier(0.55, 0, 0.18, 1);
 
 const camAt = (f: number) => {
@@ -156,7 +156,8 @@ export const CalcFlyover: React.FC = () => {
   const cam = camAt(frame);
   // blur from camera panning only (screen px/frame); zoom changes would read as a full-frame smear
   const c1 = camAt(frame + 0.5), c0 = camAt(frame - 0.5);
-  const a = { x: -(c1.x - c0.x) * cam.s, y: -(c1.y - c0.y) * cam.s }, b = { x: 0, y: 0 };
+  const pan = frame < BACK ? 1 : 0; // no blur on the pull-back: it reads as defocus
+  const a = { x: -(c1.x - c0.x) * cam.s * pan, y: -(c1.y - c0.y) * cam.s * pan }, b = { x: 0, y: 0 };
   const cur = cursorAt(frame);
   const cx = 960 + (cur.x - cam.x) * cam.s;
   const cy = 540 + (cur.y - cam.y) * cam.s;

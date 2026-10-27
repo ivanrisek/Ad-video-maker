@@ -11,12 +11,12 @@ export const Caption: React.FC<{ text: string; duration: number }> = ({ text, du
   const outT = interpolate(frame, [duration - 8, duration], [1, 0], clamp);
   return (
     <div style={{
-      position: 'absolute', left: '50%', bottom: 54, transform: `translate(-50%, ${(1 - inT) * 10}px)`, opacity: inT * outT,
-      display: 'flex', alignItems: 'center', gap: 16, padding: '14px 26px', borderRadius: 12,
+      position: 'absolute', left: '50%', bottom: 46, transform: `translate(-50%, ${(1 - inT) * 10}px)`, opacity: inT * outT,
+      display: 'flex', alignItems: 'center', gap: 20, padding: '14px 34px', borderRadius: 16,
       background: 'rgba(15,25,34,0.92)', boxShadow: '0 10px 30px -10px rgba(15,25,34,0.5)',
-      fontFamily: FONT, fontSize: 32, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.barInk, whiteSpace: 'nowrap',
+      fontFamily: FONT, fontSize: 56, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: C.barInk, whiteSpace: 'nowrap',
     }}>
-      <span style={{ width: 10, height: 10, background: C.cyan, borderRadius: 2, display: 'inline-block' }} />
+      <span style={{ width: 14, height: 14, background: '#8199ff', borderRadius: 3, display: 'inline-block' }} />
       <span>{text}</span>
     </div>
   );

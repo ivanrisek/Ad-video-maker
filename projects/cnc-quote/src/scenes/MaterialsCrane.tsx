@@ -121,8 +121,8 @@ const Overlays: React.FC = () => {
         {/* aftershock: today's price pulses */}
         {pulseOn ? (
           <>
-            <div style={{ position: 'absolute', left: PRICE.x + 20, top: PRICE.y + 12, width: PRICE.w - 26, height: PRICE.h - 24, borderRadius: 8, background: rgba(C.dykem, 0.12 * flipPop + 0.0), boxShadow: `inset 0 0 0 ${1.5}px ${rgba(C.dykem, 0.55 * flipPop)}` }} />
-            <div style={{ position: 'absolute', left: PRICE.x + 20 + (PRICE.w - 26) / 2 - 60 * (0.6 + pulse), top: PRICE.y + PRICE.h / 2 - 30 * (0.6 + pulse), width: 120 * (0.6 + pulse), height: 60 * (0.6 + pulse), borderRadius: 40, border: `2px solid ${rgba(C.dykem, 0.6 * (1 - pulse))}` }} />
+            <div style={{ position: 'absolute', left: PRICE.x + PRICE.w - 66, top: PRICE.y + 14, width: 56, height: PRICE.h - 28, borderRadius: 8, background: rgba(C.dykem, 0.12 * flipPop + 0.0), boxShadow: `inset 0 0 0 ${1.5}px ${rgba(C.dykem, 0.55 * flipPop)}` }} />
+            <div style={{ position: 'absolute', left: PRICE.x + PRICE.w - 38 - 40 * (0.6 + pulse), top: PRICE.y + PRICE.h / 2 - 22 * (0.6 + pulse), width: 80 * (0.6 + pulse), height: 44 * (0.6 + pulse), borderRadius: 40, border: `2px solid ${rgba(C.dykem, 0.6 * (1 - pulse))}` }} />
           </>
         ) : null}
       </World>

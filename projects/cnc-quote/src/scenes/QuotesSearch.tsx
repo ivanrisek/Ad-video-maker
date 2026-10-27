@@ -20,7 +20,7 @@ const TARGET = 3; // P-2026-0015 · PRIRUBNICA Ø80 + još 2
 // beat-locked (shot starts on a beat; 14.4 f/beat): typing beat 1, filter beat 3, click beat 5
 const TYPE_START = 15;
 const FILTER_START = 44;
-const CLICK = 72;
+const CLICK = 73;
 const t = ROWS[TARGET];
 const SLOT = ROWS[0];
 const CLICK_C = { x: 1426, y: SLOT.y + SLOT.h / 2 }; // "Otvori" button in the first-row slot
@@ -82,6 +82,20 @@ export const QuotesSearch: React.FC = () => {
             <Img src={staticFile(`textures/qrow${TARGET}.png`)} style={{ width: t.w, height: t.h, display: 'block' }} />
           </div>
         </SpeedBlur>
+        {/* after filtering, the table collapses to one row: page-colour patch over the empty plates
+            + a new rounded bottom edge for the table card */}
+        {frame >= FILTER_START + 12 ? (() => {
+          const k = interpolate(frame, [FILTER_START + 12, FILTER_START + 20], [0, 1], { ...clamp, easing: Easing.bezier(0.3, 0, 0.2, 1) });
+          const top = SLOT.y + SLOT.h;
+          const tb = Q.table!;
+          return (
+            <div style={{ position: 'absolute', left: tb.x - 30, top, width: tb.w + 60, height: tb.y + tb.h - top + 40, opacity: k, zIndex: 1 }}>
+              <div style={{ position: 'absolute', inset: 0, background: C.paper }} />
+              <div style={{ position: 'absolute', left: 30, top: -12, width: tb.w, height: 12, background: C.sheet, borderRadius: '0 0 12px 12px',
+                boxShadow: `inset 1px 0 0 ${C.rule}, inset -1px 0 0 ${C.rule}, inset 0 -1px 0 ${C.rule}, 0 6px 20px -10px rgba(15,30,45,0.14)` }} />
+            </div>
+          );
+        })() : null}
         {/* search field: patch the placeholder, type the query */}
         <div style={{ position: 'absolute', left: SEARCH.x + 3, top: SEARCH.y + 3, width: SEARCH.w - 6, height: SEARCH.h - 6, background: C.sheet, borderRadius: 6 }} />
         <div style={{ position: 'absolute', left: SEARCH.x - 1, top: SEARCH.y - 1, width: SEARCH.w + 2, height: SEARCH.h + 2, borderRadius: 9, boxSizing: 'border-box', opacity: focus,

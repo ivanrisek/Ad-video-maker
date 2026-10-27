@@ -69,7 +69,7 @@ export const BrandOpen: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ fontFamily: FONT, fontSize: 34, fontWeight: 500, letterSpacing: '0.16em', color: C.dim, marginTop: 44, textTransform: 'uppercase', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ fontFamily: FONT, fontSize: 40, fontWeight: 500, letterSpacing: '0.14em', color: C.dim, marginTop: 44, textTransform: 'uppercase', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <span style={{ whiteSpace: 'pre' }}>{KICKER.slice(0, kickChars)}</span>
             <span style={{ display: 'inline-block', width: 16, height: 32, marginLeft: 6, background: C.dykem, opacity: cursorOn ? 0.95 : 0 }} />
           </div>

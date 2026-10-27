@@ -1,6 +1,6 @@
 # CNC.Quote promo video
 
-A ~32 s Croatian product promo for CNC.Quote, made with the video-shotcraft skill (autonomous mode).
+A ~39 s Croatian product promo for CNC.Quote, made with the video-shotcraft skill (autonomous mode).
 Plan, storyboard and decisions: [DESIGN.md](DESIGN.md).
 
 ## Files
@@ -27,6 +27,8 @@ runtime and are never stored in the repo:
 ```bash
 CNC_USER=... CNC_PASS=... CNC_SWAP_FILE=/private/swap.json node scripts/capture.cjs
 CNC_USER=... CNC_PASS=... CNC_SWAP_FILE=/private/swap.json node scripts/capture-hires.cjs
+CNC_USER=... CNC_PASS=... CNC_SWAP_FILE=/private/swap.json node scripts/capture-calc4x.cjs
+CNC_USER=... CNC_PASS=... CNC_SWAP_FILE=/private/swap.json node scripts/capture-pdf.cjs
 ```
 
 `swap.json` is a JSON array of `["real text", "fictional text"]` pairs.

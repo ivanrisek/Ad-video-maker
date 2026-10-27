@@ -17,6 +17,9 @@ const L = layout.calc;
 const PAGE_H = L.pageH;
 const ROWS = L.qtyRows;
 const SRC = staticFile('textures/calc-full.png');
+// 4x crop of the quantity card (css 1160,870 450×450) keeps the 2.2–2.34× close-up sharp
+const HI = staticFile('textures/calc-qty-4x.png');
+const HX = 1160, HY = 870, HS = 450;
 const CUES = [8, 17, 25, 32, 38, 43, 48, 52, 56, 60];
 const FLY = 12;
 const FLY_EASE = Easing.bezier(0.5, 0, 0.8, 0.75);
@@ -26,7 +29,7 @@ const KEYS = [
 ];
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 const last = ROWS[ROWS.length - 1];
-const SAVE = { x: last.x + last.w - 74, y: last.y + 3, w: 70, h: last.h - 6 }; // "−77 %" cell
+const SAVE = { x: last.x + last.w - 86, y: last.y + 3, w: 84, h: last.h - 6 }; // "−77 %" cell
 
 export const QtyRows: React.FC = () => {
   const frame = useCurrentFrame();
@@ -36,6 +39,7 @@ export const QtyRows: React.FC = () => {
     <AbsoluteFill style={{ background: C.paper, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', width: 1920, height: PAGE_H, zoom: c.zoom, transform: `translate(${960 / c.zoom - c.cx}px, ${540 / c.zoom - c.cy}px)` }}>
         <Img src={SRC} style={{ position: 'absolute', width: 1920, height: PAGE_H }} />
+        <Img src={HI} style={{ position: 'absolute', left: HX, top: HY, width: HS, height: HS }} />
         {ROWS.map((r, i) => {
           const cue = CUES[i];
           const land = cue + FLY;
@@ -48,7 +52,7 @@ export const QtyRows: React.FC = () => {
             const air = 1 - p;
             flyer = (
               <div style={{ position: 'absolute', left: r.x, top: r.y, width: r.w, height: r.h, borderRadius: 4, zIndex: 3,
-                backgroundColor: C.sheet, backgroundImage: `url(${SRC})`, backgroundSize: `1920px ${PAGE_H}px`, backgroundPosition: `-${r.x}px -${r.y}px`,
+                backgroundColor: C.sheet, backgroundImage: `url(${HI})`, backgroundSize: `${HS}px ${HS}px`, backgroundPosition: `-${r.x - HX}px -${r.y - HY}px`,
                 opacity: appear, transform: `perspective(900px) translateY(${-120 * air}px) rotateX(${16 * air}deg) scale(${scale})`,
                 boxShadow: `0 ${24 * air}px ${48 * air}px rgba(15,30,45,${0.22 * air}), 0 ${6 * air}px ${14 * air}px rgba(15,30,45,${0.12 * air})` }} />
             );
