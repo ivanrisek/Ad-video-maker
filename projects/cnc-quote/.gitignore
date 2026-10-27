@@ -2,3 +2,4 @@ node_modules/
 out/qa/
 out/*.log
 out/promo-v*.mp4
+out/props-nobgm.json
