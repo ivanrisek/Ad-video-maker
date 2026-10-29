@@ -3,20 +3,18 @@
 "hold": 44
 },
 {
-"scroll": "#services",
+"scroll": "#services .section-heading",
+"offset": 150,
 "dur": 44
 },
 {
 "hold": 29
 },
 {
-"scroll": 4560,
-"dur": 276,
+"scroll": "#projekti .section-label",
+"offset": 130,
+"dur": 330,
 "ease": "glide"
-},
-{
-"scroll": "#projekti",
-"dur": 44
 },
 {
 "hold": 29

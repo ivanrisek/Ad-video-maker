@@ -79,11 +79,16 @@ const PLAN = JSON.parse(fs.readFileSync(process.argv[4] || 'plan.json', 'utf8'))
     log.push({ frame, ...s });
     if (s.hold) { for (let i = 0; i < s.hold; i++) await shot(); }
     else if (s.scroll !== undefined) {
-      let to = s.scroll;
-      if (typeof to === 'string') to = await p.evaluate(([sel, off, nth]) => { const e = document.querySelectorAll(sel)[nth || 0]; return Math.max(0, Math.round(e.getBoundingClientRect().top + scrollY - off)); }, [to, s.offset || 0, s.nth || 0]);
+      // selector targets are re-measured every frame: the page's sticky story section changes layout while scrolling
+      const target = async () => typeof s.scroll === 'number' ? s.scroll : p.evaluate(([sel, off, nth]) => { const e = document.querySelectorAll(sel)[nth || 0]; return Math.max(0, Math.round(e.getBoundingClientRect().top + window.scrollY - off)); }, [s.scroll, s.offset || 0, s.nth || 0]);
       const from = scrollY;
-      for (let i = 1; i <= s.dur; i++) { scrollY = from + (to - from) * (s.ease === 'glide' ? glide(i / s.dur) : ease(i / s.dur)); await setScroll(scrollY); await shot(); }
-      scrollY = to;
+      let to = await target();
+      for (let i = 1; i <= s.dur; i++) {
+        to = await target();
+        scrollY = from + (to - from) * (s.ease === 'glide' ? glide(i / s.dur) : ease(i / s.dur));
+        await setScroll(scrollY); await shot();
+      }
+      scrollY = to; await setScroll(scrollY);
     } else if (s.modalScroll !== undefined) {
       let to = s.modalScroll;
       if (to === 'end') to = await p.evaluate(() => { const d = document.querySelector('#projModal .proj-dialog'); return d.scrollHeight - d.clientHeight; });
