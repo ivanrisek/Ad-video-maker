@@ -3,21 +3,6 @@
 "hold": 44
 },
 {
-"scroll": "#about",
-"dur": 58
-},
-{
-"hold": 29
-},
-{
-"scroll": "#video",
-"dur": 58
-},
-{
-"scroll": 2400,
-"dur": 87
-},
-{
 "scroll": "#services",
 "dur": 44
 },
