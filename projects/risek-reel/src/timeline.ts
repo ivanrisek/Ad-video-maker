@@ -7,9 +7,8 @@ export const BEAT = (FPS * 60) / 124; // 14.516 frames
 export const bF = (n: number) => Math.round(n * BEAT);
 export const MUSIC_TRIM = Math.round(10.425 * FPS); // seconds into the track where the reel starts
 
-// walk.json is written by scripts/capture-site.cjs: frame count of the captured site walkthrough
-// and the capture frames where a finger taps (project open / close).
-export const WALK = { from: bF(10), frames: walk.frames as number, taps: walk.taps as { frame: number; kind: string }[] };
+// walk.json: frame count of the captured site walkthrough + the capture log segments (see walkFx.ts).
+export const WALK = { from: bF(10), frames: walk.frames as number };
 const walkEnd = WALK.from + WALK.frames;
 const outroFrom = bF(Math.ceil(walkEnd / BEAT)); // first beat after the walkthrough ends
 
