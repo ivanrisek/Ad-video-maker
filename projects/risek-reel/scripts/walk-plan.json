@@ -11,7 +11,8 @@
 },
 {
 "scroll": 4560,
-"dur": 174
+"dur": 276,
+"ease": "glide"
 },
 {
 "scroll": "#projekti",

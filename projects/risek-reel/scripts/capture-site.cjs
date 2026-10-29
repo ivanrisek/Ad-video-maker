@@ -7,6 +7,8 @@ const LIMIT = +(process.argv[3] || 1e9);
 const FPS = 30, DT = 1000 / FPS;
 fs.mkdirSync(OUT, { recursive: true });
 
+// glide: ease in over the first 15%, constant speed, ease out over the last 15% (C1-continuous)
+const glide = (t, a = 0.15) => { const v = 1 / (1 - a); if (t < a) return (v * t * t) / (2 * a); if (t > 1 - a) { const u = 1 - t; return 1 - (v * u * u) / (2 * a); } return v * (t - a / 2); };
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // in-out cubic
 const PLAN = JSON.parse(fs.readFileSync(process.argv[4] || 'plan.json', 'utf8'));
 
@@ -80,7 +82,7 @@ const PLAN = JSON.parse(fs.readFileSync(process.argv[4] || 'plan.json', 'utf8'))
       let to = s.scroll;
       if (typeof to === 'string') to = await p.evaluate(([sel, off, nth]) => { const e = document.querySelectorAll(sel)[nth || 0]; return Math.max(0, Math.round(e.getBoundingClientRect().top + scrollY - off)); }, [to, s.offset || 0, s.nth || 0]);
       const from = scrollY;
-      for (let i = 1; i <= s.dur; i++) { scrollY = from + (to - from) * ease(i / s.dur); await setScroll(scrollY); await shot(); }
+      for (let i = 1; i <= s.dur; i++) { scrollY = from + (to - from) * (s.ease === 'glide' ? glide(i / s.dur) : ease(i / s.dur)); await setScroll(scrollY); await shot(); }
       scrollY = to;
     } else if (s.modalScroll !== undefined) {
       let to = s.modalScroll;
