@@ -1,29 +1,174 @@
 {
- "frames": 1758,
- "taps": [
+ "frames": 1638,
+ "segments": [
   {
-   "frame": 664,
-   "kind": "open"
+   "frame": 0,
+   "hold": 44
   },
   {
-   "frame": 905,
-   "kind": "close"
+   "frame": 44,
+   "scroll": "#services .section-heading",
+   "offset": 150,
+   "dur": 44
   },
   {
-   "frame": 993,
-   "kind": "open"
+   "frame": 88,
+   "hold": 29
   },
   {
-   "frame": 1220,
-   "kind": "close"
+   "frame": 117,
+   "scroll": "#projekti .section-label",
+   "offset": 130,
+   "dur": 330,
+   "ease": "glide"
   },
   {
-   "frame": 1308,
-   "kind": "open"
+   "frame": 447,
+   "hold": 29
   },
   {
-   "frame": 1520,
-   "kind": "close"
+   "frame": 476,
+   "scroll": "#projekti .project-card",
+   "nth": 0,
+   "offset": 70,
+   "dur": 44
+  },
+  {
+   "frame": 520,
+   "hold": 15
+  },
+  {
+   "frame": 535,
+   "tap": ".project-more",
+   "nth": 0,
+   "resetModal": true,
+   "pre": 9,
+   "post": 14
+  },
+  {
+   "frame": 558,
+   "hold": 44
+  },
+  {
+   "frame": 602,
+   "modalScroll": "end",
+   "dur": 145
+  },
+  {
+   "frame": 747,
+   "hold": 29
+  },
+  {
+   "frame": 776,
+   "tap": ".proj-close",
+   "pre": 9,
+   "post": 12
+  },
+  {
+   "frame": 797,
+   "hold": 8
+  },
+  {
+   "frame": 805,
+   "scroll": "#projekti .project-card",
+   "nth": 1,
+   "offset": 70,
+   "dur": 44
+  },
+  {
+   "frame": 849,
+   "hold": 15
+  },
+  {
+   "frame": 864,
+   "tap": ".project-more",
+   "nth": 1,
+   "resetModal": true,
+   "pre": 9,
+   "post": 14
+  },
+  {
+   "frame": 887,
+   "hold": 44
+  },
+  {
+   "frame": 931,
+   "modalScroll": "end",
+   "dur": 131
+  },
+  {
+   "frame": 1062,
+   "hold": 29
+  },
+  {
+   "frame": 1091,
+   "tap": ".proj-close",
+   "pre": 9,
+   "post": 12
+  },
+  {
+   "frame": 1112,
+   "hold": 8
+  },
+  {
+   "frame": 1120,
+   "scroll": "#projekti .project-card",
+   "nth": 2,
+   "offset": 70,
+   "dur": 44
+  },
+  {
+   "frame": 1164,
+   "hold": 15
+  },
+  {
+   "frame": 1179,
+   "tap": ".project-more",
+   "nth": 2,
+   "resetModal": true,
+   "pre": 9,
+   "post": 14
+  },
+  {
+   "frame": 1202,
+   "hold": 44
+  },
+  {
+   "frame": 1246,
+   "modalScroll": "end",
+   "dur": 116
+  },
+  {
+   "frame": 1362,
+   "hold": 29
+  },
+  {
+   "frame": 1391,
+   "tap": ".proj-close",
+   "pre": 9,
+   "post": 12
+  },
+  {
+   "frame": 1412,
+   "hold": 8
+  },
+  {
+   "frame": 1420,
+   "scroll": "#klijenti",
+   "dur": 58
+  },
+  {
+   "frame": 1478,
+   "hold": 44
+  },
+  {
+   "frame": 1522,
+   "scroll": "#contact",
+   "dur": 58
+  },
+  {
+   "frame": 1580,
+   "hold": 58
   }
  ]
 }
