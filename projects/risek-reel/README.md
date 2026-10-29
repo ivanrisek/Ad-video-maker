@@ -1,6 +1,6 @@
 # RISEK Technology: Instagram Reel
 
-A 67.5 s, 1080×1920 (9:16) promo for risek-technology.com, made with video-shotcraft.
+A 63 s, 1080×1920 (9:16) promo for risek-technology.com, made with video-shotcraft.
 
 **Deliverables (`out/`)**
 - `RISEK-instagram-reel.mp4`: with music (bgm-tech-house, 124 BPM), -14 LUFS
@@ -9,8 +9,8 @@ A 67.5 s, 1080×1920 (9:16) promo for risek-technology.com, made with video-shot
 
 ## Structure
 1. **0–4.8 s, intro (Remotion):** the site's intro (logo, tagline, `>_ DISCOVER`), a tap, then the site's own corridor-to-light-tunnel film (`rikica_hero.mp4`). A white flash lands on the music drop.
-2. **4.8–63.5 s, real site walkthrough:** risek-technology.com in the mobile layout, captured frame by frame by `scripts/capture-site.cjs` from the plan in `scripts/walk-plan.json`. JS timers run on a virtual clock (Playwright `clock`), and CSS/Web animations and `<video>` are paused and stepped 1/30 s per frame, so the scroll is perfectly smooth and the site's animations play at real speed. It scrolls hero → about → SmileDent story → services → projects, then taps each project (CNC.Quote, Dominus CNC, ATTENTION), scrolls through the project modal, closes it, and continues to clients and contact.
-3. **63.9–67.4 s, outro:** logo, risek-technology.com, `>_ POŠALJITE UPIT`.
+2. **4.8–59 s, real site walkthrough with an edit layer (motion blur + RGB split on fast scrolls, a band tear on the hero → services jump, crash stops with flash and shake on services and projects, a zoom pulse and blue bloom on each project open):** risek-technology.com in the mobile layout, captured frame by frame by `scripts/capture-site.cjs` from the plan in `scripts/walk-plan.json`. JS timers run on a virtual clock (Playwright `clock`), and CSS/Web animations and `<video>` are paused and stepped 1/30 s per frame, so the scroll is perfectly smooth and the site's animations play at real speed. It jumps from the hero straight to services, glides slowly through all services to projects, then taps each project (CNC.Quote, Dominus CNC, ATTENTION), scrolls through the project modal, closes it, and continues to clients and contact.
+3. **59.6–63 s, outro:** logo, risek-technology.com, `>_ POŠALJITE UPIT`.
 
 ## Re-capturing the site
 ```bash
