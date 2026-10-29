@@ -1,0 +1,29 @@
+{
+ "frames": 1758,
+ "taps": [
+  {
+   "frame": 664,
+   "kind": "open"
+  },
+  {
+   "frame": 905,
+   "kind": "close"
+  },
+  {
+   "frame": 993,
+   "kind": "open"
+  },
+  {
+   "frame": 1220,
+   "kind": "close"
+  },
+  {
+   "frame": 1308,
+   "kind": "open"
+  },
+  {
+   "frame": 1520,
+   "kind": "close"
+  }
+ ]
+}
