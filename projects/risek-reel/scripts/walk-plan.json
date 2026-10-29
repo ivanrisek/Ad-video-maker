@@ -1,0 +1,154 @@
+[
+{
+"hold": 44
+},
+{
+"scroll": "#about",
+"dur": 58
+},
+{
+"hold": 29
+},
+{
+"scroll": "#video",
+"dur": 58
+},
+{
+"scroll": 2400,
+"dur": 87
+},
+{
+"scroll": "#services",
+"dur": 44
+},
+{
+"hold": 29
+},
+{
+"scroll": 4560,
+"dur": 174
+},
+{
+"scroll": "#projekti",
+"dur": 44
+},
+{
+"hold": 29
+},
+{
+"scroll": "#projekti .project-card",
+"nth": 0,
+"offset": 70,
+"dur": 44
+},
+{
+"hold": 15
+},
+{
+"tap": ".project-more",
+"nth": 0,
+"resetModal": true,
+"pre": 9,
+"post": 14
+},
+{
+"hold": 44
+},
+{
+"modalScroll": "end",
+"dur": 145
+},
+{
+"hold": 29
+},
+{
+"tap": ".proj-close",
+"pre": 9,
+"post": 12
+},
+{
+"hold": 8
+},
+{
+"scroll": "#projekti .project-card",
+"nth": 1,
+"offset": 70,
+"dur": 44
+},
+{
+"hold": 15
+},
+{
+"tap": ".project-more",
+"nth": 1,
+"resetModal": true,
+"pre": 9,
+"post": 14
+},
+{
+"hold": 44
+},
+{
+"modalScroll": "end",
+"dur": 131
+},
+{
+"hold": 29
+},
+{
+"tap": ".proj-close",
+"pre": 9,
+"post": 12
+},
+{
+"hold": 8
+},
+{
+"scroll": "#projekti .project-card",
+"nth": 2,
+"offset": 70,
+"dur": 44
+},
+{
+"hold": 15
+},
+{
+"tap": ".project-more",
+"nth": 2,
+"resetModal": true,
+"pre": 9,
+"post": 14
+},
+{
+"hold": 44
+},
+{
+"modalScroll": "end",
+"dur": 116
+},
+{
+"hold": 29
+},
+{
+"tap": ".proj-close",
+"pre": 9,
+"post": 12
+},
+{
+"hold": 8
+},
+{
+"scroll": "#klijenti",
+"dur": 58
+},
+{
+"hold": 44
+},
+{
+"scroll": "#contact",
+"dur": 58
+},
+{
+"hold": 58
+}
+]
