@@ -1,4 +1,4 @@
-// RisekReelCut — the short, punchy cut (~27 s). Same intro; then the captured site walkthrough is
+// RisekReelCut — the punchy cut (~40 s). Same intro; then the captured site walkthrough is
 // re-timed into beat-length clips (speed ramps per clip) with cut effects on every bar line:
 // crash stops, whip blur, glitch tears, zoom punches, beat pumps. Ends on the logo only (no URL text).
 import React from 'react';
@@ -21,21 +21,21 @@ const hash = (n: number) => {
 type Cut = 'none' | 'slam' | 'whip' | 'punch' | 'glitch';
 type Clip = { src: [number, number]; beats: number; cut: Cut; tear?: boolean; pump?: boolean };
 const CLIPS: Clip[] = [
-  { src: [0, 44], beats: 2, cut: 'none' }, // hero
+  { src: [0, 44], beats: 3, cut: 'none' }, // hero
   { src: [44, 88], beats: 2, cut: 'none', tear: true }, // jump to services
-  { src: [88, 447], beats: 8, cut: 'slam', pump: true }, // services glide ×3
-  { src: [447, 476], beats: 1, cut: 'slam' }, // "Projekti koje smo realizirali"
+  { src: [88, 447], beats: 14, cut: 'slam', pump: true }, // services glide ×1.8
+  { src: [447, 476], beats: 2, cut: 'slam' }, // "Projekti koje smo realizirali"
   { src: [476, 535], beats: 2, cut: 'whip' }, // → CNC.Quote card
   { src: [535, 560], beats: 2, cut: 'punch' }, // tap (slow-mo)
-  { src: [560, 776], beats: 4, cut: 'none', pump: true }, // modal ×3.7
+  { src: [560, 776], beats: 8, cut: 'none', pump: true }, // modal ×1.9
   { src: [805, 864], beats: 2, cut: 'glitch' }, // → Dominus card
   { src: [864, 889], beats: 2, cut: 'punch' },
-  { src: [889, 1091], beats: 4, cut: 'none', pump: true },
+  { src: [889, 1091], beats: 8, cut: 'none', pump: true },
   { src: [1120, 1179], beats: 2, cut: 'whip' }, // → ATTENTION card
   { src: [1179, 1204], beats: 2, cut: 'punch' },
-  { src: [1204, 1391], beats: 4, cut: 'none', pump: true },
-  { src: [1420, 1522], beats: 2, cut: 'glitch' }, // clients fly-by
-  { src: [1522, 1600], beats: 2, cut: 'whip' }, // contact
+  { src: [1204, 1391], beats: 8, cut: 'none', pump: true },
+  { src: [1420, 1522], beats: 4, cut: 'glitch' }, // clients fly-by
+  { src: [1522, 1600], beats: 4, cut: 'whip' }, // contact
 ];
 const START_BEAT = 10; // tunnel exit / drop
 type Placed = Clip & { from: number; len: number; speed: number; beat: number };
@@ -50,7 +50,7 @@ const PLACED: Placed[] = (() => {
   });
 })();
 const OUTRO_BEAT = PLACED[PLACED.length - 1].beat + PLACED[PLACED.length - 1].beats;
-export const CUT_TOTAL = bF(OUTRO_BEAT + 5) + 6;
+export const CUT_TOTAL = bF(OUTRO_BEAT + 6) + 6;
 
 // ───────── source scroll velocity (css px / src frame), from the capture log ─────────
 type LogSeg = { frame: number; scroll?: string | number; modalScroll?: string | number; dur?: number; ease?: string; tap?: string; pre?: number };
@@ -290,7 +290,7 @@ const cutSfx: Sfx[] = PLACED.flatMap((c, i): Sfx[] => {
       out.push({ at, src: 'switch-tap', volume: 0.7 }, { at: at + 1, src: 'zoom-futuristic', volume: 0.32 });
     }
   }
-  if (c.pump && c.speed > 2.5 && i === 2) out.push({ at: c.from + c.len - 144, src: 'riser-cine', volume: 0.42 });
+  if (i === 2) out.push({ at: c.from + c.len - 144, src: 'riser-cine', volume: 0.42 });
   return out;
 });
 const SFX: Sfx[] = [
