@@ -105,7 +105,7 @@ const OUTRO_ELS: El[] = [
   { key: 'kpis', file: 'wt/el-kpis.png', w: 642, h: 50.5, cx: 1060, cy: 196, scale: 1, rot: -1.5, dx: 300, dy: -240, radius: 8, cue: 25 },
 ];
 
-export const Walkthrough: React.FC<{ bgm?: boolean }> = ({ bgm = true }) => {
+export const Walkthrough: React.FC<{ bgm?: boolean; captions?: boolean }> = ({ bgm = true, captions = true }) => {
   useFonts();
   return (
     <AbsoluteFill style={{ backgroundColor: C.bar }}>
@@ -122,7 +122,7 @@ export const Walkthrough: React.FC<{ bgm?: boolean }> = ({ bgm = true }) => {
       <Sequence from={S.calc.from} durationInFrames={S.calc.duration}><CalcEntry /></Sequence>
       <Sequence from={S.pdf.from} durationInFrames={S.pdf.duration}><PdfReveal src="textures/wt/quote-pdf.png" P={WT.pdf as unknown as PdfLayout} price={PDF_PRICE} /></Sequence>
       <Sequence from={S.outro.from} durationInFrames={S.outro.duration}><Outro els={OUTRO_ELS} tagline={TAGLINE} backdrop="textures/wt/page-ponude.png" /></Sequence>
-      {WT_CAPTIONS.map((c) => (
+      {captions && WT_CAPTIONS.map((c) => (
         <Sequence key={c.from} from={c.from} durationInFrames={c.duration}><Caption text={c.text} duration={c.duration} /></Sequence>
       ))}
       {WT_LEAKS.map((cut, i) => (

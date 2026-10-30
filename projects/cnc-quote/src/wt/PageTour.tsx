@@ -20,7 +20,7 @@ type Chapter = {
   hi: string; base: string; lo: string; shade: string; ink: string; ink2: string;
   event: 'row' | 'chart' | 'card' | 'ring'; row?: number; cropY?: number;
 };
-const CHAPTERS: Chapter[] = [
+export const CHAPTERS: Chapter[] = [
   { key: 'ponude', num: '01', name: 'Ponude', title: 'Sve ponude,\njedan popis.', sub: 'Traži po broju, kupcu, dijelu ili crtežu. Status jednim klikom.',
     hi: '#1c2b3b', base: '#0f1922', lo: '#0a1118', shade: '#000000', ink: '#eef3f7', ink2: 'rgba(230,237,242,0.68)', event: 'row' },
   { key: 'statistika', num: '02', name: 'Statistika', title: 'Koliko nudite.\nKoliko dobijete.', sub: 'Vrijednost po mjesecu, uspješnost i ponude koje čekaju odgovor.',
