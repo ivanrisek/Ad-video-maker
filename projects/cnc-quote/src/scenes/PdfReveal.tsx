@@ -7,6 +7,7 @@
 // counterpart here): the grand total gets a cobalt multiply wash, then a long readable hold.
 import React from 'react';
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from 'remotion';
+import { Circle } from '@remotion/rough-notation';
 import { C, rgba } from '../lib/Brand';
 import { Grain } from '../lib/Polish';
 import layout from '../layout.json';
@@ -52,14 +53,26 @@ const hermite = (xs: number[], ys: number[]) => {
     return (2 * t3 - 3 * t2 + 1) * ys[i] + (t3 - 2 * t2 + t) * h * m[i] + (-2 * t3 + 3 * t2) * ys[i + 1] + (t3 - t2) * h * m[i + 1];
   };
 };
-const CURVES = Object.fromEntries(KEYS.map((k) => [k, hermite(ANCHORS.map((a) => a.frame), ANCHORS.map((a) => a[k]))])) as Record<keyof Cam, (x: number) => number>;
-const camAt = (f: number) => Object.fromEntries(KEYS.map((k) => [k, CURVES[k](f)])) as Cam;
+// with a highlighted price: after the full-sheet view the camera pushes in on the price row + totals
+const ANCHORS_PRICE: (Cam & { frame: number })[] = [
+  ...ANCHORS.slice(0, 3),
+  { frame: 84, cx: 545, cy: 455, zoom: 1.62, rotX: 2, rotY: -4 },
+  { frame: 116, cx: 548, cy: 458, zoom: 1.68, rotX: 2, rotY: -3 },
+];
+const curvesFor = (A: (Cam & { frame: number })[]) => Object.fromEntries(KEYS.map((k) => [k, hermite(A.map((a) => a.frame), A.map((a) => a[k]))])) as Record<keyof Cam, (x: number) => number>;
+const CURVES = curvesFor(ANCHORS);
+const CURVES_PRICE = curvesFor(ANCHORS_PRICE);
+const camAt = (f: number, withPrice = false) => Object.fromEntries(KEYS.map((k) => [k, (withPrice ? CURVES_PRICE : CURVES)[k](f)])) as Cam;
+export type PriceMark = { box: B; label: string };
+const PRICE_CUE = 74;
 const PERSP = 2200;
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
-export const PdfReveal: React.FC<{ src?: string; P?: PdfLayout }> = ({ src = 'textures/quote-pdf.png', P = layout.pdf as PdfLayout }) => {
+export const PdfReveal: React.FC<{ src?: string; P?: PdfLayout; price?: PriceMark }> = ({ src = 'textures/quote-pdf.png', P = layout.pdf as PdfLayout, price }) => {
   const frame = useCurrentFrame();
-  const cam = camAt(frame);
+  const cam = camAt(frame, !!price);
+  const circleP = interpolate(frame, [PRICE_CUE, PRICE_CUE + 12], [0, 1], { ...clamp, easing: Easing.bezier(0.3, 0, 0.2, 1) });
+  const tagIn = interpolate(frame, [PRICE_CUE + 10, PRICE_CUE + 18], [0, 1], { ...clamp, easing: Easing.bezier(0.2, 0, 0, 1) });
   const W = P.sheet.w, H = P.sheet.h;
   const BLOCKS = blocksFor(P);
   // pairs every 6f, but the whole sheet must be written by ~f56 (before the camera settles)
@@ -109,6 +122,18 @@ export const PdfReveal: React.FC<{ src?: string; P?: PdfLayout }> = ({ src = 'te
                 </React.Fragment>
               );
             })}
+            {price && frame >= PRICE_CUE ? (
+              <>
+                <div style={{ position: 'absolute', left: price.box.x, top: price.box.y }}>
+                  <Circle color={C.dykem} strokeWidth={2.6} iterations={2} seed={11} padding={{ top: 7, right: 7, bottom: 9, left: 10 }} progress={circleP}>
+                    <div style={{ width: price.box.w, height: price.box.h }} />
+                  </Circle>
+                </div>
+                <div style={{ position: 'absolute', left: price.box.x + price.box.w / 2, top: price.box.y + price.box.h + 20, transform: `translate(-50%, ${((1 - tagIn) * 8).toFixed(2)}px)`, opacity: tagIn,
+                  whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 999, background: C.dykem, color: '#fff', fontFamily: 'Archivo, sans-serif', fontWeight: 600, fontSize: 12.5, letterSpacing: 0.2,
+                  boxShadow: `0 4px 14px ${rgba(C.dykem, 0.35)}` }}>{price.label}</div>
+              </>
+            ) : null}
             {idleBlink > 0 ? <div style={{ position: 'absolute', left: BLOCKS[0].x - 4, top: BLOCKS[0].y + 4, width: 3, height: 24, background: C.dykem, borderRadius: 2, opacity: idleBlink }} /> : null}
             <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 3, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent)' }} />
           </div>

@@ -46,6 +46,8 @@ export const WT_TOTAL = WT_SHOTS.outro.from + WT_SHOTS.outro.duration;
 const S = WT_SHOTS;
 const STAMP = beatF(PDF_END + 3);
 const CARD_TEXT = 'Upišite dio. / Cijena se računa *odmah.*';
+// the price per piece calculated on the previous shot, circled on the printed quote (measured on quote-pdf.png)
+const PDF_PRICE = { box: { x: 551, y: 399, w: 48, h: 18 }, label: `${WT.states.find((s) => s.name === 's7')!.priceText.replace('€', ' €')} / kom · iz kalkulacije` };
 const TAGLINE = 'Od upisa dijela do gotove ponude.';
 
 const c = (k: keyof typeof CL) => S.calc.from + CL[k];
@@ -118,7 +120,7 @@ export const Walkthrough: React.FC<{ bgm?: boolean }> = ({ bgm = true }) => {
       <Sequence from={S.tour.from} durationInFrames={S.tour.duration}><PageTour /></Sequence>
       <Sequence from={S.card.from} durationInFrames={S.card.duration}><TitleCard text={CARD_TEXT} duration={S.card.duration} /></Sequence>
       <Sequence from={S.calc.from} durationInFrames={S.calc.duration}><CalcEntry /></Sequence>
-      <Sequence from={S.pdf.from} durationInFrames={S.pdf.duration}><PdfReveal src="textures/wt/quote-pdf.png" P={WT.pdf as unknown as PdfLayout} /></Sequence>
+      <Sequence from={S.pdf.from} durationInFrames={S.pdf.duration}><PdfReveal src="textures/wt/quote-pdf.png" P={WT.pdf as unknown as PdfLayout} price={PDF_PRICE} /></Sequence>
       <Sequence from={S.outro.from} durationInFrames={S.outro.duration}><Outro els={OUTRO_ELS} tagline={TAGLINE} backdrop="textures/wt/page-ponude.png" /></Sequence>
       {WT_CAPTIONS.map((c) => (
         <Sequence key={c.from} from={c.from} durationInFrames={c.duration}><Caption text={c.text} duration={c.duration} /></Sequence>

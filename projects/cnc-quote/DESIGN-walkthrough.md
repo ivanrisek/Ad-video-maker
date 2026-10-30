@@ -59,3 +59,8 @@ Total 1318 f ≈ 43.9 s.
 - The final price per piece gets one hand-drawn `<Circle>` (rough-notation, cyan) as "Spremi ponudu" is clicked.
 - Audio uses `<Audio>` from `@remotion/media` with `trimBefore` (replaces the deprecated `startFrom`); re-measured: clicks heard within 0.4 f of the picture, no clipping.
 - Not adopted: `<HtmlInCanvasMotionBlur>` (needs the HTML-in-canvas Chrome flag, unavailable in this headless shell); the Studio preview (runs on localhost inside the cloud sandbox).
+
+## 6. Calculated price on the printed quote (user request)
+
+- In the PDF shot the camera, after the full-sheet view (f64), pushes in on the item row and totals (zoom 1.1 → 1.62 by f84).
+- The price per piece from the calculation (37,65 €, state s7) gets a hand-drawn cobalt `<Circle>` on the sheet (f74–86) and a cobalt tag "37,65 € / kom · iz kalkulacije" under it. The value comes from `walkthrough.json`; the box was measured on `quote-pdf.png`.
