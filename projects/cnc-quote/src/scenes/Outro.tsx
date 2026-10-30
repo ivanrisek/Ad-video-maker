@@ -20,7 +20,7 @@ const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 const trackRow = layout.materials.trackCells;
 const TR = { x: trackRow[0].x, y: trackRow[0].y, w: 1282, h: trackRow[0].h };
 
-type El = { key: string; file?: string; crop?: boolean; w: number; h: number; cx: number; cy: number; scale: number; rot: number; dx: number; dy: number; radius: number; cue: number };
+export type El = { key: string; file?: string; crop?: boolean; w: number; h: number; cx: number; cy: number; scale: number; rot: number; dx: number; dy: number; radius: number; cue: number };
 const ELS: El[] = [
   { key: 'topbar', file: 'el-topbar.png', w: 1920, h: 99, cx: 960, cy: 66, scale: 0.6, rot: 0, dx: 0, dy: -140, radius: 10, cue: 4 },
   { key: 'price', file: 'el-price.png', w: 430, h: 244, cx: 255, cy: 250, scale: 0.82, rot: -4, dx: -520, dy: 0, radius: 12, cue: 7 },
@@ -38,7 +38,7 @@ const DUST = Array.from({ length: 22 }, (_, i) => ({
   size: 2.2 + (i % 3) * 0.9, opacity: 0.3 + ((i * 7) % 5) * 0.08,
 }));
 
-export const Outro: React.FC = () => {
+export const Outro: React.FC<{ els?: El[]; tagline?: string; backdrop?: string }> = ({ els = ELS, tagline = TAGLINE, backdrop = 'textures/quotes-full.png' }) => {
   const frame = useCurrentFrame();
   const D = OUTRO_DURATION;
   const blur = interpolate(frame, [0, 24], [6, 16], { ...clamp, easing: Easing.bezier(0.4, 0, 0.4, 1) });
@@ -64,11 +64,11 @@ export const Outro: React.FC = () => {
         <AbsoluteFill style={{ transform: `perspective(1400px) rotateX(${camTilt}deg) scale(${camScale})`, transformOrigin: '50% 45%' }}>
           {/* the calculator page, defocused, as the backdrop */}
           <AbsoluteFill style={{ overflow: 'hidden' }}>
-            <Img src={staticFile('textures/quotes-full.png')} style={{ position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, filter: `blur(${blur}px)`, transform: 'scale(1.08)' }} />
+            <Img src={staticFile(backdrop)} style={{ position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, filter: `blur(${blur}px)`, transform: 'scale(1.08)' }} />
           </AbsoluteFill>
           <AbsoluteFill style={{ background: `radial-gradient(1300px 820px at 50% 46%, rgba(15,25,34,${scrim * 0.92}), rgba(15,25,34,${Math.min(1, scrim * 1.12)}) 70%)` }} />
           <AbsoluteFill style={{ background: `radial-gradient(760px 380px at 960px 470px, ${rgba(C.dykem, 0.5)}, ${rgba(C.dykem, 0.16)} 55%, ${rgba(C.dykem, 0)} 78%)`, opacity: stage }} />
-          {ELS.map((el) => {
+          {els.map((el) => {
             if (frame < el.cue) return null;
             const posAt = (fr: number) => {
               const tt = interpolate(fr, [el.cue, el.cue + 12], [0, 1], { ...clamp, easing: FLY_EASE });
@@ -141,7 +141,7 @@ export const Outro: React.FC = () => {
                 </>
               ) : null}
             </div>
-            <div style={{ fontFamily: FONT, fontSize: 46, fontWeight: 500, color: '#c9d4de', marginTop: 34, opacity: tag, transform: `translateY(${(1 - tag) * 8}px)` }}>{TAGLINE}</div>
+            <div style={{ fontFamily: FONT, fontSize: 46, fontWeight: 500, color: '#c9d4de', marginTop: 34, opacity: tag, transform: `translateY(${(1 - tag) * 8}px)` }}>{tagline}</div>
           </div>
         </AbsoluteFill>
         <Grain opacity={0.06} blend="soft-light" />

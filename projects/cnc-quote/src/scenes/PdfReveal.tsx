@@ -12,34 +12,26 @@ import { Grain } from '../lib/Polish';
 import layout from '../layout.json';
 
 export const PDF_REVEAL_DURATION = 116;
-const P = layout.pdf!;
-const W = P.sheet.w, H = P.sheet.h;
 const PAPER = '#ffffff';
 type B = { x: number; y: number; w: number; h: number };
+export type PdfLayout = { sheet: B; head: B; to: B; thead: B; rows: B[]; totLines: B[]; rest: B[]; alt?: B[] };
 const half = (b: B, side: 'l' | 'r', split = 0.5): B =>
   side === 'l' ? { ...b, w: b.w * split } : { ...b, x: b.x + b.w * split, w: b.w * (1 - split) };
-// blocks in reading order, written two at a time
-const BLOCKS: B[] = [
-  half(P.head, 'l', 0.55), half(P.head, 'r', 0.55),
-  half(P.to, 'l', 0.6), half(P.to, 'r', 0.6),
-  P.thead, P.rows[0],
-  P.rows[1], P.rows[2],
-  P.totLines[0], P.totLines[1],
-  P.totLines[2], P.rest[0],
-  P.rest[1], P.rest[2],
-];
+// blocks in reading order, written two at a time (duplicates between `alt` and `rest` dropped)
+const blocksFor = (P: PdfLayout): B[] => {
+  const list = [half(P.head, 'l', 0.55), half(P.head, 'r', 0.55), half(P.to, 'l', 0.6), half(P.to, 'r', 0.6), P.thead, ...P.rows, ...P.totLines, ...(P.alt || []), ...P.rest];
+  const seen = new Set<string>();
+  return list.filter((b) => { const k = `${b.x},${b.y}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.y - b.y || a.x - b.x);
+};
 const WIPE = 9;
-const cueFor = (i: number) => 8 + Math.floor(i / 2) * 6;
 const REVEAL_EASE = Easing.bezier(0.4, 0, 0.6, 1);
-const TOTAL = P.totLines[2];
-const TOT_CUE = 64;
 
 type Cam = { cx: number; cy: number; zoom: number; rotX: number; rotY: number };
 const ANCHORS: (Cam & { frame: number })[] = [
   { frame: 0, cx: 300, cy: 150, zoom: 1.6, rotX: 8, rotY: -18 },
   { frame: 26, cx: 350, cy: 300, zoom: 1.25, rotX: 6, rotY: -12 },
-  { frame: 64, cx: W / 2, cy: 400, zoom: 1.1, rotX: 3, rotY: -5 },
-  { frame: 116, cx: W / 2, cy: 400, zoom: 1.13, rotX: 3, rotY: -3 },
+  { frame: 64, cx: 397, cy: 400, zoom: 1.1, rotX: 3, rotY: -5 },
+  { frame: 116, cx: 397, cy: 400, zoom: 1.13, rotX: 3, rotY: -3 },
 ];
 const KEYS: (keyof Cam)[] = ['cx', 'cy', 'zoom', 'rotX', 'rotY'];
 const hermite = (xs: number[], ys: number[]) => {
@@ -65,9 +57,16 @@ const camAt = (f: number) => Object.fromEntries(KEYS.map((k) => [k, CURVES[k](f)
 const PERSP = 2200;
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
-export const PdfReveal: React.FC = () => {
+export const PdfReveal: React.FC<{ src?: string; P?: PdfLayout }> = ({ src = 'textures/quote-pdf.png', P = layout.pdf as PdfLayout }) => {
   const frame = useCurrentFrame();
   const cam = camAt(frame);
+  const W = P.sheet.w, H = P.sheet.h;
+  const BLOCKS = blocksFor(P);
+  // pairs every 6f, but the whole sheet must be written by ~f56 (before the camera settles)
+  const step = Math.min(6, 48 / Math.max(1, Math.ceil(BLOCKS.length / 2) - 1));
+  const cueFor = (i: number) => 8 + Math.floor(i / 2) * step;
+  const TOTAL = P.totLines[P.totLines.length - 1];
+  const TOT_CUE = cueFor(BLOCKS.indexOf(TOTAL)) + WIPE + 6;
   let caretIdx = -1;
   BLOCKS.forEach((_, i) => { if (frame >= cueFor(i) && frame <= cueFor(i) + WIPE + 2) caretIdx = i; });
   const idleBlink = frame < cueFor(0) ? (Math.floor(frame / 4) % 2 === 0 ? 1 : 0.25) : 0;
@@ -86,7 +85,7 @@ export const PdfReveal: React.FC = () => {
             background: `radial-gradient(ellipse 50% 50% at 50% 50%, ${rgba(C.dykem, 0.45)} 0%, ${rgba(C.cyan, 0.08)} 55%, transparent 72%)` }} />
           <div style={{ position: 'absolute', left: 0, top: 0, width: W, height: H, borderRadius: 10, overflow: 'hidden', background: PAPER,
             boxShadow: `0 0 0 1.5px rgba(255,255,255,0.35), 0 70px 160px -20px rgba(0,0,0,0.85), 0 20px 60px rgba(0,0,0,0.5)` }}>
-            <Img src={staticFile('textures/quote-pdf.png')} style={{ position: 'absolute', width: W, height: H }} />
+            <Img src={staticFile(src)} style={{ position: 'absolute', width: W, height: H }} />
             {totWash > 0 ? (
               <div style={{ position: 'absolute', left: TOTAL.x - 6, top: TOTAL.y + 2, width: (TOTAL.w + 12) * totWash, height: TOTAL.h - 2, borderRadius: 5, background: rgba(C.dykem, 0.16), mixBlendMode: 'multiply' }} />
             ) : null}
