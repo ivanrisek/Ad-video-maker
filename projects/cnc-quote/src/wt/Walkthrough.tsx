@@ -4,9 +4,11 @@
 // cut (f225). From the drop on, cuts and key hits sit on beatF(n) (heard frame of beat n).
 // SFX offsets measured for film 1 (see src/Main.tsx): output +1.3 f, per-source lead-in to peak.
 import React from 'react';
-import { AbsoluteFill, Audio, Sequence, staticFile } from 'remotion';
+import { AbsoluteFill, Sequence, staticFile } from 'remotion';
+import { Audio } from '@remotion/media';
+import { LightLeakOverlay } from '../fx/LightLeak';
 import { C, useFonts } from '../lib/Brand';
-import { Caption, FlashCut } from '../lib/Overlays';
+import { Caption } from '../lib/Overlays';
 import { BrandOpen } from '../scenes/BrandOpen';
 import { TitleCard } from '../scenes/TitleCard';
 import { PdfLayout, PdfReveal } from '../scenes/PdfReveal';
@@ -55,7 +57,9 @@ export const WT_CAPTIONS = [
   { from: c('cycle') + 12, duration: 36, text: `Sirovac Ø${WT.calc.D}×${WT.calc.L} · ${WT.calc.machine} ${WT.calc.cycle} min` },
   { from: S.pdf.from + 30, duration: 80, text: 'Gotova ponuda za kupca · ispis i PDF' },
 ];
-export const WT_FLASHES = [S.login.from, S.tour.from, S.outro.from];
+// light leaks (cobalt) straddle the big cuts: brand→login, login→tour (drop), calc→PDF, PDF→outro
+export const WT_LEAKS = [S.login.from, S.tour.from, S.pdf.from, S.outro.from];
+const LEAK = 24;
 
 type Sfx = { from: number; src: string; volume: number; dur?: number; note: string };
 const sfx = (frame: number, src: string, volume: number, note: string, dur?: number): Sfx => ({ from: at(frame, src), src, volume, note, dur });
@@ -103,7 +107,7 @@ export const Walkthrough: React.FC<{ bgm?: boolean }> = ({ bgm = true }) => {
   useFonts();
   return (
     <AbsoluteFill style={{ backgroundColor: C.bar }}>
-      {bgm ? <Audio src={staticFile('audio/bgm-tech-house.mp3')} startFrom={BGM_START_FROM} volume={bgmVolume} /> : null}
+      {bgm ? <Audio src={staticFile('audio/bgm-tech-house.mp3')} trimBefore={BGM_START_FROM} volume={bgmVolume} /> : null}
       {WT_SFX.map((s, i) => (
         <Sequence key={`sfx-${i}`} from={s.from} durationInFrames={s.dur ?? 90}>
           <Audio src={staticFile(`audio/${s.src}`)} volume={s.volume} />
@@ -119,8 +123,8 @@ export const Walkthrough: React.FC<{ bgm?: boolean }> = ({ bgm = true }) => {
       {WT_CAPTIONS.map((c) => (
         <Sequence key={c.from} from={c.from} durationInFrames={c.duration}><Caption text={c.text} duration={c.duration} /></Sequence>
       ))}
-      {WT_FLASHES.map((cut) => (
-        <Sequence key={cut} from={cut - 5} durationInFrames={10}><FlashCut /></Sequence>
+      {WT_LEAKS.map((cut, i) => (
+        <Sequence key={cut} name={`Light leak ${i + 1}`} from={cut - LEAK / 2} durationInFrames={LEAK}><LightLeakOverlay seed={i + 2} /></Sequence>
       ))}
     </AbsoluteFill>
   );

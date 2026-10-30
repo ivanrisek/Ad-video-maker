@@ -3,6 +3,7 @@
 // per dot, pointer glides to "Prijavi se", presses (two ripples), camera pushes through the button.
 import React from 'react';
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from 'remotion';
+import { zoomBlur } from '@remotion/effects/zoom-blur';
 import { EASE, ramp } from '../lib/Polish';
 import { C } from '../lib/Brand';
 import W from '../walkthrough.json';
@@ -40,7 +41,9 @@ export const LoginShot: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: C.sheet, overflow: 'hidden' }}>
       <World cam={cam} h={1080}>
-        <Img src={staticFile('textures/wt/login-empty.png')} style={{ position: 'absolute', width: 1920, height: 1080 }} />
+        {/* the push through the button gets a radial zoom blur centred on it (Remotion effects) */}
+        <Img src={staticFile(f < 104 ? 'textures/wt/login-empty.png' : 'textures/wt/login-filled.png')} style={{ position: 'absolute', width: 1920, height: 1080 }}
+          effects={[zoomBlur({ amount: interpolate(f, [104, 124], [0, 70], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.exit }), center: [BTN.x / 1920, BTN.y / 1080], samples: 24, disabled: f < 104 })]} />
         {/* e-mail autofill wipe */}
         {emailWipe > 0 ? (
           <div style={{ position: 'absolute', left: L.email.x, top: L.email.y, width: L.email.w * emailWipe, height: L.email.h, overflow: 'hidden' }}>

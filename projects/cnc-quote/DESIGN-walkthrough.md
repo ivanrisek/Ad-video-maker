@@ -50,3 +50,12 @@ Total 1318 f ≈ 43.9 s.
 - Copy matches the screen: C45 caption cites the supplier price list; Postavke chapter shows company details (the machines/rates sections are folded in the real page); three demo customers carry a discount so "rabat" is visible; "Svakom kupcu njegovi uvjeti."
 - SFX lead-ins measured for every source and recorded in `Walkthrough.tsx`.
 - Deviation from `bottom-push-stack-wipe` (documented): chapters 03 and 04 use the app's light steel and slate instead of a saturated colour, so the five chapters stay inside the CNC.Quote palette; adjacent chapters still alternate dark / light.
+
+## 5. Remotion-skill pass (official `remotion-dev/skills`, remotion-markup)
+
+- Remotion upgraded 4.0.484 → 4.0.539; added `@remotion/transitions`, `@remotion/effects`, `@remotion/rough-notation`, `@remotion/media`.
+- Cuts brand→login, login→tour, calc→PDF and PDF→outro carry a cobalt light leak (`lightLeak()` on a `<Solid>`, hueShift 176) instead of white flashes / a hard cut (`src/fx/LightLeak.tsx`).
+- The push through "Prijavi se" gets a radial `zoomBlur()` centred on the button.
+- The final price per piece gets one hand-drawn `<Circle>` (rough-notation, cyan) as "Spremi ponudu" is clicked.
+- Audio uses `<Audio>` from `@remotion/media` with `trimBefore` (replaces the deprecated `startFrom`); re-measured: clicks heard within 0.4 f of the picture, no clipping.
+- Not adopted: `<HtmlInCanvasMotionBlur>` (needs the HTML-in-canvas Chrome flag, unavailable in this headless shell); the Studio preview (runs on localhost inside the cloud sandbox).

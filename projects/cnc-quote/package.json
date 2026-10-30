@@ -8,11 +8,15 @@
     "still": "remotion still src/index.ts CncPromo"
   },
   "dependencies": {
-    "@remotion/cli": "^4.0.484",
-    "@remotion/motion-blur": "^4.0.484",
+    "@remotion/cli": "4.0.539",
+    "@remotion/effects": "4.0.539",
+    "@remotion/media": "4.0.539",
+    "@remotion/motion-blur": "4.0.539",
+    "@remotion/rough-notation": "4.0.539",
+    "@remotion/transitions": "4.0.539",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "remotion": "^4.0.484"
+    "remotion": "4.0.539"
   },
   "devDependencies": {
     "@types/react": "19.2.17",

@@ -7,7 +7,8 @@
 // Then: camera to the result, click "Spremi ponudu" (saved as P-2026-0024 in the local demo DB),
 // pull back to the titled quote with its toast, click "Ispiši / PDF".
 import React from 'react';
-import { AbsoluteFill, Img, staticFile, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from 'remotion';
+import { Circle } from '@remotion/rough-notation';
 import { EASE, SpeedBlur, mix, ramp } from '../lib/Polish';
 import { C, rgba } from '../lib/Brand';
 import W from '../walkthrough.json';
@@ -159,6 +160,15 @@ export const CalcEntry: React.FC = () => {
           <Focus b={G.dimL!} on={focus('dimL', CL.machine - 8)} />
           <Focus b={G.machine} on={focus('machine', CL.cycle)} />
           <Focus b={G.cycle!} on={focus('cycle', CYCLE_DONE + 10)} />
+          {/* the result: a hand-drawn cobalt circle around the price per piece (Remotion rough-notation) */}
+          {f >= CL.save - 10 && f < CL.save + 24 ? (
+            <div style={{ position: 'absolute', left: G.bigPrice!.x, top: G.bigPrice!.y, opacity: interpolate(f, [CL.save + 14, CL.save + 24], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) }}>
+              <Circle color={C.cyan} strokeWidth={3.5} iterations={2} seed={7} padding={{ top: 12, right: 26, bottom: 12, left: 18 }}
+                progress={interpolate(f, [CL.save - 10, CL.save + 2], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.swift })}>
+                <div style={{ width: G.bigPrice!.w, height: G.bigPrice!.h }} />
+              </Circle>
+            </div>
+          ) : null}
           {G.sirovac && f >= SWAP.s6 && f < SWAP.s6 + 30 ? (
             <div style={{ position: 'absolute', left: G.sirovac.x, top: G.sirovac.y, width: G.sirovac.w, height: G.sirovac.h, borderRadius: 4,
               background: `linear-gradient(90deg, ${rgba(C.dykem, 0.03)} 0%, ${rgba(C.dykem, 0.18)} ${mix(-20, 110, ramp(f, SWAP.s6, 22, EASE.out)).toFixed(1)}%, ${rgba(C.dykem, 0)} ${mix(5, 135, ramp(f, SWAP.s6, 22, EASE.out)).toFixed(1)}%)`,
