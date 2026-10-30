@@ -26,17 +26,27 @@ generated calculation, and finally generating the quote) and make a CNC.Quote pr
 | Customer quote | `document-typewriter-reveal` (reused from film 1, fed the new document) | |
 | Sign-off | `outro-group-photo-launch` (reused, new elements) | |
 
-## 3. Storyboard (30 fps)
+## 3. Storyboard (30 fps, final)
+
+Music drop heard at f225 (page-tour cut); `beatF(n) = round(225.1 + 14.516·n)`. Authoritative table: `src/wt/Walkthrough.tsx`.
 
 | # | Frames | Shot | Copy |
 |---|---|---|---|
 | 1 | 0–100 | Brand open | kicker "KALKULACIJA CNC OBRADE I PONUDE" |
-| 2 | 100–225 | Login page | — |
-| 3 | 225–300 | Title card | "Ponude, klijenti, / cijene i **statistika**." |
-| 4 | 300–518 (beats 0–15) | Page tour, 5 chapters, pushes on beats 3/6/9/12 | headlines per page (see `src/wt/PageTour.tsx`) |
-| 5 | 518–591 (beats 15–20) | Title card | "Upišite dio. / Cijena se računa **odmah**." |
-| 6 | 591–910 (beats 20–42) | Random calculation, save, print click | step captions |
-| 7 | 910–1026 (beats 42–50) | Printed quote writes itself | "Gotova ponuda za kupca · ispis i PDF" |
-| 8 | 1026–1176 (beat 50 →) | Outro group photo, stamp on beat 53 | tagline "Kalkulacije i ponude s današnjim cijenama materijala." |
+| 2 | 100–225 | Login page (flash on both cuts) | — |
+| 3 | 225–588 (beats 0–25) | Page tour: Ponude → Statistika → Klijenti → Materijali i cijene → Postavke, 5 beats each, pushes on beats 5/10/15/20 | headlines in `src/wt/PageTour.tsx` |
+| 4 | 588–660 (beats 25–30) | Title card | "Upišite dio. / Cijena se računa **odmah.**" |
+| 5 | 660–1052 (beats 30–57) | Random calculation: client, part, drawing, qty, round bar, material search (C45), Ø, L, machine, cycle; save (beat 23 of the shot); print (beat 25) | captions follow each step |
+| 6 | 1052–1168 (beats 57–65) | Printed quote writes itself | "Gotova ponuda za kupca · ispis i PDF" |
+| 7 | 1168–1318 (beat 65 →) | Outro group photo, stamp on beat 68 | tagline "Od upisa dijela do gotove ponude." |
 
-Total ≈ 1176 f ≈ 39 s.
+Total 1318 f ≈ 43.9 s.
+
+## 4. Review fixes (independent review of the first render)
+
+- State switches in the calculation are hard cuts; typed values stay drawn until the next captured state is shown (no revert / double exposure).
+- Drawing number and cycle time are typed; caret positions come from measured text extents.
+- Page chapters hold ~1.5 s still; in-chapter highlights are single (one row / one card / one section) and finish before the next push.
+- Copy matches the screen: C45 caption cites the supplier price list; Postavke chapter shows company details (the machines/rates sections are folded in the real page); three demo customers carry a discount so "rabat" is visible; "Svakom kupcu njegovi uvjeti."
+- SFX lead-ins measured for every source and recorded in `Walkthrough.tsx`.
+- Deviation from `bottom-push-stack-wipe` (documented): chapters 03 and 04 use the app's light steel and slate instead of a saturated colour, so the five chapters stay inside the CNC.Quote palette; adjacent chapters still alternate dark / light.

@@ -13,7 +13,8 @@ import { PdfLayout, PdfReveal } from '../scenes/PdfReveal';
 import { El, Outro } from '../scenes/Outro';
 import { LoginShot, LOGIN_DURATION } from './LoginShot';
 import { PageTour } from './PageTour';
-import { CalcEntry } from './CalcEntry';
+import { CalcEntry, CL, CALC_ENTRY_BEATS } from './CalcEntry';
+import { PAGE_TOUR_BEATS } from './PageTour';
 import WT from '../walkthrough.json';
 
 export const BEAT = 30 * 60 / 124.0;
@@ -21,60 +22,63 @@ const DROP = 225.1;
 export const BGM_START_FROM = Math.round(145 + (322.1 - DROP)); // film 1: startFrom 145 → drop heard at 322.1
 export const beatF = (n: number) => Math.round(DROP + n * BEAT);
 const OUT_OFFSET = 1.3;
-const LEAD: Record<string, number> = { 'click-camera.mp3': 5.7, 'switch-click-quick.mp3': 0.2, 'swoosh-quick.mp3': 8.9, 'transition-soft.mp3': 13, 'impact-deep-whoosh.mp3': 16.5, 'riser-cine.mp3': 22, 'whoosh-fast.mp3': 6, 'whoosh-big.mp3': 8, 'keyboard.mp3': 0, 'sparkle-touch.mp3': 2 };
+// lead-in to peak, measured on the source files (rms + sample peak, 2026-10-30): click-camera 5.7, switch-click-quick 0.2,
+// swoosh-quick 8.9, transition-soft 13, whoosh-fast 21.5, whoosh-big 21.4, sparkle-touch 15.7, impact-deep-whoosh 16.5, riser-cine 22
+const LEAD: Record<string, number> = { 'click-camera.mp3': 5.7, 'switch-click-quick.mp3': 0.2, 'swoosh-quick.mp3': 8.9, 'transition-soft.mp3': 13, 'impact-deep-whoosh.mp3': 16.5, 'riser-cine.mp3': 22, 'whoosh-fast.mp3': 21.5, 'whoosh-big.mp3': 21.4, 'keyboard.mp3': 0, 'sparkle-touch.mp3': 15.7 };
 const at = (frame: number, src: string) => Math.round(frame - (LEAD[src] ?? 0) - OUT_OFFSET);
 
+const TOUR_END = PAGE_TOUR_BEATS;
+const CARD_END = TOUR_END + 5;
+const CALC_END = CARD_END + CALC_ENTRY_BEATS;
+const PDF_END = CALC_END + 8;
 export const WT_SHOTS = {
   brand: { from: 0, duration: 100 },
   login: { from: 100, duration: LOGIN_DURATION }, // 100–225
-  tour: { from: beatF(0), duration: beatF(15) - beatF(0) }, // 225–443
-  card: { from: beatF(15), duration: beatF(20) - beatF(15) }, // 443–515
-  calc: { from: beatF(20), duration: beatF(42) - beatF(20) }, // 515–835
-  pdf: { from: beatF(42), duration: beatF(50) - beatF(42) }, // 835–951
-  outro: { from: beatF(50), duration: 150 }, // 951–1101; logo stamp on beatF(53)
+  tour: { from: beatF(0), duration: beatF(TOUR_END) - beatF(0) }, // 225–588
+  card: { from: beatF(TOUR_END), duration: beatF(CARD_END) - beatF(TOUR_END) }, // 588–660
+  calc: { from: beatF(CARD_END), duration: beatF(CALC_END) - beatF(CARD_END) }, // 660–1052
+  pdf: { from: beatF(CALC_END), duration: beatF(PDF_END) - beatF(CALC_END) }, // 1052–1168
+  outro: { from: beatF(PDF_END), duration: 150 }, // 1168–1318; logo stamp on beatF(PDF_END + 3)
 } as const;
 export const WT_TOTAL = WT_SHOTS.outro.from + WT_SHOTS.outro.duration;
 const S = WT_SHOTS;
-const STAMP = beatF(53);
+const STAMP = beatF(PDF_END + 3);
 const CARD_TEXT = 'Upišite dio. / Cijena se računa *odmah.*';
-const TAGLINE = 'Kalkulacije i ponude s današnjim cijenama materijala.';
+const TAGLINE = 'Od upisa dijela do gotove ponude.';
 
-const B = (n: number) => Math.round(n * BEAT); // local beat offset inside a beat-aligned shot
+const c = (k: keyof typeof CL) => S.calc.from + CL[k];
+// captions follow the action they describe (each starts once that step is on screen)
 export const WT_CAPTIONS = [
-  { from: S.calc.from + 30, duration: 36, text: 'Kupac iz popisa klijenata' },
-  { from: S.calc.from + 70, duration: 56, text: `${WT.calc.part} · ${WT.calc.qty} kom` },
-  { from: S.calc.from + B(10) - 2, duration: 56, text: `Materijal ${WT.calc.mat} po današnjoj cijeni` },
-  { from: S.calc.from + B(14) - 2, duration: 52, text: `Sirovac Ø${WT.calc.D}×${WT.calc.L} · ${WT.calc.machine}` },
-  { from: S.calc.from + B(19) + 4, duration: 32, text: `${WT.saved.titleText.replace('Ponuda ', 'Spremljeno kao ')}` },
+  { from: c('client') + 4, duration: 34, text: 'Kupac iz popisa klijenata' },
+  { from: c('qty') + 12, duration: 30, text: `${WT.calc.part} · ${WT.calc.drawing} · ${WT.calc.qty} kom` },
+  { from: c('option') + 5, duration: 40, text: `Materijal ${WT.calc.mat} · 2,70 €/kg iz cjenika` },
+  { from: c('cycle') + 12, duration: 36, text: `Sirovac Ø${WT.calc.D}×${WT.calc.L} · ${WT.calc.machine} ${WT.calc.cycle} min` },
   { from: S.pdf.from + 30, duration: 80, text: 'Gotova ponuda za kupca · ispis i PDF' },
 ];
-export const WT_FLASHES = [S.tour.from, S.outro.from];
+export const WT_FLASHES = [S.login.from, S.tour.from, S.outro.from];
 
 type Sfx = { from: number; src: string; volume: number; dur?: number; note: string };
 const sfx = (frame: number, src: string, volume: number, note: string, dur?: number): Sfx => ({ from: at(frame, src), src, volume, note, dur });
-// calculator clicks (local beats 3,5,8,10,11,13,14,15,17,19,21): two real click samples alternate, volume steps down
-const CALC_CLICKS = [3, 5, 8, 10, 11, 13, 14, 15, 17, 19, 21];
+const CALC_CLICKS = Object.keys(CL) as (keyof typeof CL)[];
+const TYPING: [keyof typeof CL, number, string][] = [['part', WT.calc.part.length, 'part name'], ['drawing', WT.calc.drawing.length, 'drawing no.'], ['qty', WT.calc.qty.length, 'quantity'],
+  ['mat', WT.calc.query.length, 'material query'], ['dimD', WT.calc.D.length, 'Ø'], ['dimL', WT.calc.L.length, 'L'], ['cycle', WT.calc.cycle.length, 'cycle time']];
 export const WT_SFX: Sfx[] = [
   sfx(14, 'transition-soft.mp3', 0.4, 'brand logo lands'),
   sfx(S.brand.from + 96, 'whoosh-fast.mp3', 0.35, 'lockup lifts out'),
   sfx(S.login.from + 46, 'switch-click-quick.mp3', 0.25, 'e-mail autofill'),
   sfx(S.login.from + 58, 'keyboard.mp3', 0.32, 'password typing (17 × 2f)', 34),
   sfx(S.login.from + 98, 'click-camera.mp3', 0.55, 'click "Prijavi se"'),
-  sfx(S.login.from + 106, 'whoosh-big.mp3', 0.4, 'push through the button'),
-  ...[3, 6, 9, 12].map((b, k) => sfx(beatF(b), 'swoosh-quick.mp3', 0.34 - 0.02 * k, `page push ${k + 1} (beat ${b})`)),
+  sfx(S.login.from + 118, 'whoosh-big.mp3', 0.4, 'push through the button'),
+  ...[5, 10, 15, 20].map((b, k) => sfx(beatF(b), 'swoosh-quick.mp3', 0.34 - 0.02 * k, `page push ${k + 1} (beat ${b})`)),
   sfx(S.card.from + 6, 'swoosh-quick.mp3', 0.36, 'title card words press in'),
-  ...CALC_CLICKS.map((b, k) => sfx(S.calc.from + B(b), k % 2 ? 'switch-click-quick.mp3' : 'click-camera.mp3', (k % 2 ? 0.3 : 0.48) - 0.012 * k, `calculator click ${k + 1} (beat ${b})`)),
-  sfx(S.calc.from + B(5) + 3, 'keyboard.mp3', 0.34, 'typing the part name (11 × 3f)', 33),
-  sfx(S.calc.from + B(8) + 3, 'keyboard.mp3', 0.3, 'typing the quantity', 6),
-  sfx(S.calc.from + B(11) + 3, 'keyboard.mp3', 0.3, 'typing the material query', 9),
-  sfx(S.calc.from + B(14) + 3, 'keyboard.mp3', 0.3, 'typing Ø', 6),
-  sfx(S.calc.from + B(15) + 3, 'keyboard.mp3', 0.3, 'typing L', 9),
-  sfx(S.calc.from + B(19) + 6, 'sparkle-touch.mp3', 0.28, 'saved toast', 36),
+  ...CALC_CLICKS.map((k, i) => sfx(c(k), i % 2 ? 'switch-click-quick.mp3' : 'click-camera.mp3', (i % 2 ? 0.3 : 0.48) - 0.01 * i, `calculator click: ${k} (on beat)`)),
+  ...TYPING.map(([k, n, what]) => sfx(c(k) + 3, 'keyboard.mp3', 0.32, `typing ${what}`, n * 3)),
+  sfx(c('save') + 6, 'sparkle-touch.mp3', 0.4, 'saved toast', 40),
   sfx(S.pdf.from + 2, 'transition-soft.mp3', 0.36, 'quote sheet in'),
   sfx(S.pdf.from + 8, 'keyboard.mp3', 0.28, 'document writes itself', 45),
   sfx(STAMP, 'riser-cine.mp3', 0.36, 'riser peaks into the stamp', 30),
-  sfx(STAMP, 'impact-deep-whoosh.mp3', 0.4, 'logo stamp (beat 53, film peak)'),
-  sfx(S.outro.from + 58, 'sparkle-touch.mp3', 0.34, 'rule + tagline glint', 50),
+  sfx(STAMP, 'impact-deep-whoosh.mp3', 0.4, 'logo stamp (film peak)'),
+  sfx(S.outro.from + 58, 'sparkle-touch.mp3', 0.38, 'rule + tagline glint', 50),
 ];
 
 const bgmVolume = (f: number) => {

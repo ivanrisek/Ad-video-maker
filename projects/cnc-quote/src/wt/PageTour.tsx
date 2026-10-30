@@ -18,19 +18,19 @@ type Box = { x: number; y: number; w: number; h: number };
 type Chapter = {
   key: keyof typeof W.pages; num: string; name: string; title: string; sub: string;
   hi: string; base: string; lo: string; shade: string; ink: string; ink2: string;
-  event: 'row' | 'chart' | 'rows' | 'cards' | 'ring';
+  event: 'row' | 'chart' | 'card' | 'ring'; row?: number; cropY?: number;
 };
 const CHAPTERS: Chapter[] = [
   { key: 'ponude', num: '01', name: 'Ponude', title: 'Sve ponude,\njedan popis.', sub: 'Traži po broju, kupcu, dijelu ili crtežu. Status jednim klikom.',
     hi: '#1c2b3b', base: '#0f1922', lo: '#0a1118', shade: '#000000', ink: '#eef3f7', ink2: 'rgba(230,237,242,0.68)', event: 'row' },
   { key: 'statistika', num: '02', name: 'Statistika', title: 'Koliko nudite.\nKoliko dobijete.', sub: 'Vrijednost po mjesecu, uspješnost i ponude koje čekaju odgovor.',
     hi: '#4565ff', base: '#2f4bd8', lo: '#2138c0', shade: '#0a1670', ink: '#ffffff', ink2: 'rgba(255,255,255,0.8)', event: 'chart' },
-  { key: 'klijenti', num: '03', name: 'Klijenti', title: 'Svaki kupac,\nsvoji uvjeti.', sub: 'Kontakt, OIB, rabat i jezik ponude: hrvatski, njemački ili engleski.',
-    hi: '#f6f8fa', base: '#e3e8ee', lo: '#d0d8e0', shade: '#5a6b7c', ink: '#122130', ink2: 'rgba(18,33,48,0.66)', event: 'rows' },
+  { key: 'klijenti', num: '03', name: 'Klijenti', title: 'Svakom kupcu\nnjegovi uvjeti.', sub: 'Kontakt, OIB i rabat za svakog kupca, na jednom popisu.',
+    hi: '#f6f8fa', base: '#e3e8ee', lo: '#d0d8e0', shade: '#5a6b7c', ink: '#122130', ink2: 'rgba(18,33,48,0.66)', event: 'row', row: 2 },
   { key: 'materijali', num: '04', name: 'Materijali i cijene', title: 'Cijene metala,\nsvaki radni dan.', sub: 'LME i ECB stižu sami, a za ostalo vrijedi vaš cjenik dobavljača.',
-    hi: '#4a5a69', base: '#3b4a58', lo: '#2c3945', shade: '#0b1218', ink: '#ffffff', ink2: 'rgba(255,255,255,0.74)', event: 'cards' },
-  { key: 'postavke', num: '05', name: 'Postavke', title: 'Vaša radionica,\nvaše satnice.', sub: 'Strojevi, satnice, marže, PDV i podaci tvrtke na svakoj ponudi.',
-    hi: '#4565ff', base: '#2f4bd8', lo: '#2138c0', shade: '#0a1670', ink: '#ffffff', ink2: 'rgba(255,255,255,0.8)', event: 'ring' },
+    hi: '#4a5a69', base: '#3b4a58', lo: '#2c3945', shade: '#0b1218', ink: '#ffffff', ink2: 'rgba(255,255,255,0.74)', event: 'card' },
+  { key: 'postavke', num: '05', name: 'Postavke', title: 'Vaši podaci\nna svakoj ponudi.', sub: 'Naziv, OIB, adresa i IBAN idu u zaglavlje ponude, a izgled birate sami.',
+    hi: '#4565ff', base: '#2f4bd8', lo: '#2138c0', shade: '#0a1670', ink: '#ffffff', ink2: 'rgba(255,255,255,0.8)', event: 'ring', cropY: 190 },
 ];
 
 // window card: page crop x 300–1620, y 0–880 (css px), shown 1040 px wide
@@ -40,8 +40,10 @@ const K = CARD_W / CROP.w;
 const CARD_H = CROP.h * K;
 
 export const BEAT = 30 * 60 / 124.0;
-export const PUSH_STARTS = [3, 6, 9, 12].map((b) => b * BEAT - 4); // push lands ~4f after the beat begins → contact on the beat
-export const PAGE_TOUR_DURATION = Math.round(15 * BEAT);
+// 5 beats per chapter (~1.5 s fully still and readable after the headline lands); pushes on beats 5/10/15/20
+export const PUSH_STARTS = [5, 10, 15, 20].map((b) => b * BEAT - 4); // contact on the beat
+export const PAGE_TOUR_BEATS = 25;
+export const PAGE_TOUR_DURATION = Math.round(PAGE_TOUR_BEATS * BEAT);
 const pushP = (f: number, i: number) => ramp(f, PUSH_STARTS[i], PUSH_DUR, heavyEaseOut);
 const landAt = (i: number) => (i === 0 ? 0 : PUSH_STARTS[i - 1] + 12);
 const stackY = (f: number) => PUSH_STARTS.reduce((acc, _, i) => acc + pushP(f, i) * H, 0);
@@ -49,7 +51,7 @@ const stackY = (f: number) => PUSH_STARTS.reduce((acc, _, i) => acc + pushP(f, i
 const lines = (t: string) => t.split('\n');
 
 const Event: React.FC<{ c: Chapter; i: number; f: number }> = ({ c, i, f }) => {
-  const t0 = landAt(i) + 14;
+  const t0 = landAt(i) + 16; // after the headline lands; every event is over before the next push
   const P = W.pages[c.key] as { rows: Box[]; cards: Box[]; chart: Box | null };
   const wash = (b: Box, start: number, r = 6) => {
     const p = ramp(f, start, 22, EASE.out);
@@ -60,18 +62,18 @@ const Event: React.FC<{ c: Chapter; i: number; f: number }> = ({ c, i, f }) => {
       background: `linear-gradient(90deg, ${rgba(C.dykem, 0.03)} 0%, ${rgba(C.dykem, 0.16)} ${(head * 100).toFixed(1)}%, ${rgba(C.dykem, 0)} ${((head + 0.25) * 100).toFixed(1)}%)`,
       boxShadow: `inset 0 0 0 1.5px ${rgba(C.dykem, 0.28)}` }} />;
   };
-  if (c.event === 'row' && P.rows[0]) return wash(P.rows[0], t0);
-  if (c.event === 'rows') return <>{P.rows.slice(0, 7).map((r, k) => wash(r, t0 + k * 3))}</>;
-  if (c.event === 'cards') return <>{P.cards.slice(0, 7).map((r, k) => wash(r, t0 + k * 3, 12))}</>;
+  if (c.event === 'row' && P.rows[c.row ?? 0]) return wash(P.rows[c.row ?? 0], t0);
+  if (c.event === 'card' && P.cards[0]) return wash(P.cards[0], t0, 12);
   if (c.event === 'chart' && P.chart) {
     // bars regrow: a white patch over the plot area lifts from the baseline upward
     const ch = P.chart;
     const g = f < landAt(i) ? 0 : ramp(f, t0 - 6, 22, EASE.swift);
     if (g >= 1) return null;
-    return <div style={{ position: 'absolute', left: ch.x + 40, top: ch.y, width: ch.w - 40, height: (ch.h - 26) * (1 - g), background: '#ffffff' }} />;
+    // plot area only (keeps the y-axis labels and legend)
+    return <div style={{ position: 'absolute', left: ch.x + 72, top: ch.y + 28, width: ch.w - 84, height: (ch.h - 56) * (1 - g), background: '#ffffff' }} />;
   }
   if (c.event === 'ring') {
-    const b = { x: 334, y: 312, w: 306, h: 204 }; // "Radionica" theme card (selected)
+    const b = { x: 318, y: 668, w: 980, h: 346 }; // "Podaci tvrtke" (company details on the quote header)
     const p = ramp(f, t0, 18, EASE.out);
     if (f < t0) return null;
     return <div style={{ position: 'absolute', left: b.x - 6 * (1 - p), top: b.y - 6 * (1 - p), width: b.w + 12 * (1 - p), height: b.h + 12 * (1 - p), borderRadius: 14,
@@ -112,7 +114,7 @@ const ChapterScene: React.FC<{ i: number; f: number }> = ({ i, f }) => {
       {/* the real page, pinned as a window card */}
       <div style={{ position: 'absolute', right: 96, top: (H - CARD_H) / 2, width: CARD_W, height: CARD_H, borderRadius: 18, overflow: 'hidden', background: C.paper,
         boxShadow: `inset 0 1px 0 rgba(255,255,255,0.6), ${softShadow(48, { color: c.shade, strength: 1.5 })}` }}>
-        <div style={{ position: 'absolute', left: -CROP.x * K, top: -CROP.y * K, width: 1920, height: 1080, transform: `scale(${K})`, transformOrigin: '0 0' }}>
+        <div style={{ position: 'absolute', left: -CROP.x * K, top: -(c.cropY ?? CROP.y) * K, width: 1920, height: 1080, transform: `scale(${K})`, transformOrigin: '0 0' }}>
           <Img src={staticFile(`textures/wt/page-${c.key}.png`)} style={{ position: 'absolute', width: 1920, height: 1080 }} />
           <Event c={c} i={i} f={f} />
         </div>

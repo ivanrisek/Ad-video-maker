@@ -55,7 +55,24 @@ const byText = (page, sel, re) => page.evaluate(([s, src]) => {
   await page.addInitScript(() => { window.print = () => { window.__printed = true; }; });
   const settle = async (ms = 700) => { await page.evaluate(() => document.fonts.ready); await page.mouse.move(1910, 1075); await page.waitForTimeout(ms); };
   const shot = async (name, full = true) => { await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: full }); };
-  const W = { calc: CALC, pages: {}, states: [] };
+  // ONLY=klijenti,ponude → re-capture just those pages and merge into the existing walkthrough.json
+  const ONLY = (process.env.ONLY || '').split(',').filter(Boolean);
+  const W = ONLY.length ? JSON.parse(fs.readFileSync(JSON_OUT, 'utf8')) : { calc: CALC, pages: {}, states: [] };
+  if (ONLY.length) {
+    await page.request.post(BASE + 'api/login', { data: USER });
+    for (const h of ONLY) {
+      await page.goto(BASE + '#' + h, { waitUntil: 'networkidle' });
+      await page.reload({ waitUntil: 'networkidle' });
+      await settle(1800);
+      await shot(`page-${h}`, false);
+      W.pages[h] = { nav: await boxes(page, '.nav button'), head: await box(page, '.view-head'), rows: await boxes(page, 'main table tbody tr, #app table tbody tr'),
+        cards: await boxes(page, '.idx-grid > *, .kpis > *, .kpi, .stat, .theme-opt, .themes > *'), chart: await box(page, 'svg.chart, .chart svg, .chart') };
+    }
+    fs.writeFileSync(JSON_OUT, JSON.stringify(W, null, 1));
+    console.log('re-captured', ONLY.join(', '));
+    await b.close();
+    return;
+  }
 
   // ---------- login page ----------
   await page.goto(BASE, { waitUntil: 'networkidle' });

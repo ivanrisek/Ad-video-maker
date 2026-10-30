@@ -13,7 +13,7 @@ export const Caption: React.FC<{ text: string; duration: number }> = ({ text, du
     <div style={{
       position: 'absolute', left: '50%', bottom: 46, transform: `translate(-50%, ${(1 - inT) * 10}px)`, opacity: inT * outT,
       display: 'flex', alignItems: 'center', gap: 20, padding: '14px 34px', borderRadius: 16,
-      background: 'rgba(15,25,34,0.92)', boxShadow: '0 10px 30px -10px rgba(15,25,34,0.5)',
+      background: '#0f1922', boxShadow: '0 10px 30px -10px rgba(15,25,34,0.5)',
       fontFamily: FONT, fontSize: 56, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: C.barInk, whiteSpace: 'nowrap',
     }}>
       <span style={{ width: 14, height: 14, background: '#8199ff', borderRadius: 3, display: 'inline-block' }} />
