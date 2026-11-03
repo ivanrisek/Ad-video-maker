@@ -1,44 +1,50 @@
 {
- "frames": 1638,
+ "frames": 1687,
  "segments": [
   {
    "frame": 0,
-   "hold": 44
+   "hold": 96,
+   "type": {
+    "sel": "#heroTermCode",
+    "from": 8,
+    "dur": 75,
+    "text": "Razvijamo softverske sustave, upravljamo IT infrastrukturom i pružamo tehničku podršku, savjetovanje, automatizaciju i AI rješenja prema stvarnim potrebama vašeg poslovanja. Fokusirani smo na jasnu komunikaciju, pouzdanu tehnologiju i praktična rješenja koja dugoročno podržavaju rast. Poslujemo na području cijele Hrvatske i šire."
+   }
   },
   {
-   "frame": 44,
+   "frame": 96,
    "scroll": "#services .section-heading",
    "offset": 150,
    "dur": 44
   },
   {
-   "frame": 88,
+   "frame": 140,
    "hold": 29
   },
   {
-   "frame": 117,
+   "frame": 169,
    "scroll": "#projekti .section-label",
    "offset": 130,
    "dur": 330,
    "ease": "glide"
   },
   {
-   "frame": 447,
+   "frame": 496,
    "hold": 29
   },
   {
-   "frame": 476,
+   "frame": 525,
    "scroll": "#projekti .project-card",
    "nth": 0,
    "offset": 70,
    "dur": 44
   },
   {
-   "frame": 520,
+   "frame": 569,
    "hold": 15
   },
   {
-   "frame": 535,
+   "frame": 584,
    "tap": ".project-more",
    "nth": 0,
    "resetModal": true,
@@ -46,41 +52,41 @@
    "post": 14
   },
   {
-   "frame": 558,
+   "frame": 607,
    "hold": 44
   },
   {
-   "frame": 602,
+   "frame": 651,
    "modalScroll": "end",
    "dur": 145
   },
   {
-   "frame": 747,
+   "frame": 796,
    "hold": 29
   },
   {
-   "frame": 776,
+   "frame": 825,
    "tap": ".proj-close",
    "pre": 9,
    "post": 12
   },
   {
-   "frame": 797,
+   "frame": 846,
    "hold": 8
   },
   {
-   "frame": 805,
+   "frame": 854,
    "scroll": "#projekti .project-card",
    "nth": 1,
    "offset": 70,
    "dur": 44
   },
   {
-   "frame": 849,
+   "frame": 898,
    "hold": 15
   },
   {
-   "frame": 864,
+   "frame": 913,
    "tap": ".project-more",
    "nth": 1,
    "resetModal": true,
@@ -88,41 +94,41 @@
    "post": 14
   },
   {
-   "frame": 887,
+   "frame": 936,
    "hold": 44
   },
   {
-   "frame": 931,
+   "frame": 980,
    "modalScroll": "end",
    "dur": 131
   },
   {
-   "frame": 1062,
+   "frame": 1111,
    "hold": 29
   },
   {
-   "frame": 1091,
+   "frame": 1140,
    "tap": ".proj-close",
    "pre": 9,
    "post": 12
   },
   {
-   "frame": 1112,
+   "frame": 1161,
    "hold": 8
   },
   {
-   "frame": 1120,
+   "frame": 1169,
    "scroll": "#projekti .project-card",
    "nth": 2,
    "offset": 70,
    "dur": 44
   },
   {
-   "frame": 1164,
+   "frame": 1213,
    "hold": 15
   },
   {
-   "frame": 1179,
+   "frame": 1228,
    "tap": ".project-more",
    "nth": 2,
    "resetModal": true,
@@ -130,44 +136,44 @@
    "post": 14
   },
   {
-   "frame": 1202,
+   "frame": 1251,
    "hold": 44
   },
   {
-   "frame": 1246,
+   "frame": 1295,
    "modalScroll": "end",
    "dur": 116
   },
   {
-   "frame": 1362,
+   "frame": 1411,
    "hold": 29
   },
   {
-   "frame": 1391,
+   "frame": 1440,
    "tap": ".proj-close",
    "pre": 9,
    "post": 12
   },
   {
-   "frame": 1412,
+   "frame": 1461,
    "hold": 8
   },
   {
-   "frame": 1420,
+   "frame": 1469,
    "scroll": "#klijenti",
    "dur": 58
   },
   {
-   "frame": 1478,
+   "frame": 1527,
    "hold": 44
   },
   {
-   "frame": 1522,
+   "frame": 1571,
    "scroll": "#contact",
    "dur": 58
   },
   {
-   "frame": 1580,
+   "frame": 1629,
    "hold": 58
   }
  ]
