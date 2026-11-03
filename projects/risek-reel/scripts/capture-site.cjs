@@ -77,7 +77,16 @@ const PLAN = JSON.parse(fs.readFileSync(process.argv[4] || 'plan.json', 'utf8'))
 
   for (const s of PLAN) {
     log.push({ frame, ...s });
-    if (s.hold) { for (let i = 0; i < s.hold; i++) await shot(); }
+    if (s.hold && s.type) {
+      // re-type a text element char by char (the page typed it before capture started)
+      const full = await p.evaluate(([sel, text]) => { const e = document.querySelector(sel); const c = e.cloneNode(false); c.textContent = ''; e.replaceWith(c); return text || e.textContent; }, [s.type.sel, s.type.text]); // clone detaches the page's own (slower) typer
+      for (let i = 0; i < s.hold; i++) {
+        const k = Math.min(1, Math.max(0, (i - s.type.from) / s.type.dur));
+        await p.evaluate(([sel, txt]) => { document.querySelector(sel).textContent = txt; }, [s.type.sel, full.slice(0, Math.round(full.length * k))]);
+        await shot();
+      }
+    }
+    else if (s.hold) { for (let i = 0; i < s.hold; i++) await shot(); }
     else if (s.scroll !== undefined) {
       // selector targets are re-measured every frame: the page's sticky story section changes layout while scrolling
       const target = async () => typeof s.scroll === 'number' ? s.scroll : p.evaluate(([sel, off, nth]) => { const e = document.querySelectorAll(sel)[nth || 0]; return Math.max(0, Math.round(e.getBoundingClientRect().top + window.scrollY - off)); }, [s.scroll, s.offset || 0, s.nth || 0]);

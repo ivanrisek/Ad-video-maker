@@ -21,21 +21,21 @@ const hash = (n: number) => {
 type Cut = 'none' | 'slam' | 'whip' | 'punch' | 'glitch';
 type Clip = { src: [number, number]; beats: number; cut: Cut; tear?: boolean; pump?: boolean; sharp?: boolean }; // sharp: no motion blur / RGB split (text must read)
 const CLIPS: Clip[] = [
-  { src: [0, 44], beats: 3, cut: 'none' }, // hero
-  { src: [44, 88], beats: 2, cut: 'none', tear: true }, // jump to services
-  { src: [88, 447], beats: 20, cut: 'slam', pump: true, sharp: true }, // services glide ×1.24, kept sharp
-  { src: [447, 476], beats: 2, cut: 'slam' }, // "Projekti koje smo realizirali"
-  { src: [476, 535], beats: 2, cut: 'whip' }, // → CNC.Quote card
-  { src: [535, 560], beats: 2, cut: 'punch' }, // tap (slow-mo)
-  { src: [560, 776], beats: 8, cut: 'none', pump: true }, // modal ×1.9
-  { src: [805, 864], beats: 2, cut: 'glitch' }, // → Dominus card
-  { src: [864, 889], beats: 2, cut: 'punch' },
-  { src: [889, 1091], beats: 8, cut: 'none', pump: true },
-  { src: [1120, 1179], beats: 2, cut: 'whip' }, // → ATTENTION card
-  { src: [1179, 1204], beats: 2, cut: 'punch' },
-  { src: [1204, 1391], beats: 8, cut: 'none', pump: true },
-  { src: [1420, 1522], beats: 3, cut: 'glitch' }, // clients fly-by
-  { src: [1522, 1600], beats: 3, cut: 'whip' }, // contact
+  { src: [0, 96], beats: 6, cut: 'none' }, // hero: terminal text types in (~2.3 s)
+  { src: [96, 140], beats: 2, cut: 'none', tear: true }, // jump to services
+  { src: [140, 496], beats: 20, cut: 'slam', pump: true, sharp: true }, // services glide ×1.24, kept sharp
+  { src: [496, 525], beats: 2, cut: 'slam' }, // "Projekti koje smo realizirali"
+  { src: [525, 584], beats: 2, cut: 'whip' }, // → CNC.Quote card
+  { src: [584, 609], beats: 2, cut: 'punch' }, // tap (slow-mo)
+  { src: [609, 825], beats: 8, cut: 'none', pump: true }, // modal ×1.9
+  { src: [854, 913], beats: 2, cut: 'glitch' }, // → Dominus card
+  { src: [913, 938], beats: 2, cut: 'punch' },
+  { src: [938, 1140], beats: 8, cut: 'none', pump: true },
+  { src: [1169, 1228], beats: 2, cut: 'whip' }, // → ATTENTION card
+  { src: [1228, 1253], beats: 2, cut: 'punch' },
+  { src: [1253, 1440], beats: 8, cut: 'none', pump: true },
+  { src: [1469, 1571], beats: 3, cut: 'glitch' }, // clients fly-by
+  { src: [1571, 1649], beats: 3, cut: 'whip' }, // contact
 ];
 const START_BEAT = 10; // tunnel exit / drop
 type Placed = Clip & { from: number; len: number; speed: number; beat: number };
