@@ -272,37 +272,77 @@ const TunnelFlash: React.FC = () => {
 };
 
 // ───────── sound ─────────
+// Cinematic sci-fi palette. Each sample is placed so its loudest moment (peak, measured with librosa)
+// lands on the event frame: pk(event, peakSeconds).
 type Sfx = { at: number; src: string; volume: number; trim?: number };
+const pk = (event: number, peakSec: number) => event - Math.round(peakSec * 30);
+const PEAK: Record<string, number> = {
+  'scifi-click': 0.17,
+  'ui-zoom-in': 0.15,
+  'door-open-futuristic': 0.27,
+  'sweep-scifi-fast': 0.34,
+  'glitch-static-electric': 0.13,
+  'glitch-static': 0.19,
+  'stomp-apocalyptic': 0.42,
+  'power-up-electronic': 0.27,
+  'space-intro-futuristic': 6.16,
+  'glass-hit-cine': 0.09,
+  'hit-fast-exciting': 0.17,
+  'air-whoosh-powerful': 0.2,
+  'wind-woosh-throw': 0.16,
+  'hit-blow': 0.16,
+  'sweep-digital': 0.39,
+  'data-scan': 0.77,
+  'shimmer-sparkle-sweep': 0.94,
+  'machine-activate-short': 0.87,
+  'zoom-futuristic': 0.59,
+  'impact-movie-epic': 1.4,
+  'bass-hit-short': 0.12,
+  'metal-drop-scifi-small': 0.16,
+  'sparkle-poof-hit': 0.07,
+  'whoosh-electric': 0.79,
+};
+const at = (event: number, src: string, volume: number): Sfx => ({ at: pk(event, PEAK[src] ?? 0), src, volume });
+
 const cutSfx: Sfx[] = PLACED.flatMap((c, i): Sfx[] => {
   const out: Sfx[] = [];
   if (c.tear) {
-    out.push({ at: c.from, src: 'whoosh-big', volume: 0.55 });
-    out.push({ at: c.from + Math.round(c.len * 0.35), src: 'glitch-electric-small', volume: 0.45 });
+    out.push(at(c.from + Math.round(c.len * 0.3), 'glitch-static-electric', 0.4));
+    out.push(at(c.from + Math.round(c.len * 0.5), 'sweep-scifi-fast', 0.5));
   }
-  if (c.cut === 'slam') out.push({ at: c.from - 1, src: i === 2 ? 'bass-hit-futuristic' : 'impact-epic-trailer', volume: i === 2 ? 0.7 : 0.5 }, { at: c.from - 1, src: 'impact-zoom-quick', volume: 0.35 });
-  if (c.cut === 'whip') out.push({ at: c.from - 4, src: i % 2 ? 'swoosh-quick' : 'air-woosh-quick', volume: 0.45 });
-  if (c.cut === 'glitch') out.push({ at: c.from - 3, src: i % 2 ? 'glitch-virtual-quick' : 'break-glitch-digital', volume: 0.4 });
-  if (c.cut === 'punch') out.push({ at: c.from - 1, src: 'hit-weak', volume: 0.4 });
-  // taps inside this clip (re-timed)
+  if (c.cut === 'slam' && i === 2) {
+    out.push(at(c.from, 'stomp-apocalyptic', 0.6), at(c.from + 2, 'power-up-electronic', 0.26), at(c.from + 12, 'data-scan', 0.16));
+  } else if (c.cut === 'slam') {
+    out.push(at(c.from, 'glass-hit-cine', 0.42), at(c.from, 'hit-fast-exciting', 0.5));
+  }
+  if (c.cut === 'whip') out.push(at(c.from, i % 2 ? 'air-whoosh-powerful' : 'wind-woosh-throw', 0.45));
+  if (c.cut === 'glitch') out.push(at(c.from, i % 2 ? 'glitch-static' : 'glitch-static-electric', 0.38));
+  if (c.cut === 'punch') out.push(at(c.from, 'hit-blow', 0.45));
+  if (c.pump && i !== 2) out.push(at(c.from + 6, 'sweep-digital', 0.15));
+  // taps inside this clip (re-timed): click + the project "opening"
   for (const tp of TAPS) {
     if (tp >= c.src[0] && tp < c.src[1]) {
-      const at = c.from + Math.round((tp - c.src[0]) / c.speed);
-      out.push({ at, src: 'switch-tap', volume: 0.7 }, { at: at + 1, src: 'zoom-futuristic', volume: 0.32 });
+      const t = c.from + Math.round((tp - c.src[0]) / c.speed);
+      out.push(at(t, 'scifi-click', 0.6), at(t + 2, 'ui-zoom-in', 0.28), at(t + 4, 'door-open-futuristic', 0.32));
     }
   }
-  if (i === 2) out.push({ at: c.from + c.len - 144, src: 'riser-cine', volume: 0.42 });
+  // 6 s sci-fi rise that peaks as the projects heading slams in
+  if (i === 2) out.push(at(c.from + c.len, 'space-intro-futuristic', 0.4));
   return out;
 });
 const SFX: Sfx[] = [
-  { at: 4, src: 'light-aura', volume: 0.3 },
-  { at: bF(6), src: 'switch-tap', volume: 0.85 },
-  { at: 51, src: 'riser-cine', volume: 0.45, trim: 50 },
-  { at: bF(6) + 8, src: 'warp-slide', volume: 0.55 },
-  { at: bF(10) - 2, src: 'impact-deep-whoosh', volume: 0.6 },
+  at(30, 'machine-activate-short', 0.3), // logo materialises
+  at(43, 'shimmer-sparkle-sweep', 0.28), // sheen across the logo
+  at(bF(6), 'scifi-click', 0.8), // DISCOVER
+  at(bF(6) + 18, 'zoom-futuristic', 0.45), // into the tunnel
+  { at: 51, src: 'riser-cine', volume: 0.4, trim: 50 },
+  at(bF(10), 'impact-movie-epic', 0.5), // tunnel exit on the drop
+  at(bF(10), 'bass-hit-short', 0.45),
   ...cutSfx,
-  { at: bF(OUTRO_BEAT) - 6, src: 'whoosh-fast', volume: 0.4 },
-  { at: bF(OUTRO_BEAT) - 2, src: 'impact-deep-whoosh', volume: 0.6 },
-  { at: bF(OUTRO_BEAT) + 16, src: 'sparkle', volume: 0.32 },
+  at(bF(OUTRO_BEAT) - 1, 'whoosh-electric', 0.4),
+  at(bF(OUTRO_BEAT), 'metal-drop-scifi-small', 0.55),
+  at(bF(OUTRO_BEAT), 'sparkle-poof-hit', 0.32),
+  at(bF(OUTRO_BEAT) + 28, 'shimmer-sparkle-sweep', 0.26),
 ];
 
 export const RisekReelCut: React.FC<{ bgm: boolean }> = ({ bgm }) => (
