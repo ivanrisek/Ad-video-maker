@@ -19,11 +19,11 @@ const hash = (n: number) => {
 
 // ───────── clips: [src in, src out) in walkthrough frames, length in beats, cut effect INTO the clip ─────────
 type Cut = 'none' | 'slam' | 'whip' | 'punch' | 'glitch';
-type Clip = { src: [number, number]; beats: number; cut: Cut; tear?: boolean; pump?: boolean };
+type Clip = { src: [number, number]; beats: number; cut: Cut; tear?: boolean; pump?: boolean; sharp?: boolean }; // sharp: no motion blur / RGB split (text must read)
 const CLIPS: Clip[] = [
   { src: [0, 44], beats: 3, cut: 'none' }, // hero
   { src: [44, 88], beats: 2, cut: 'none', tear: true }, // jump to services
-  { src: [88, 447], beats: 14, cut: 'slam', pump: true }, // services glide ×1.8
+  { src: [88, 447], beats: 20, cut: 'slam', pump: true, sharp: true }, // services glide ×1.24, kept sharp
   { src: [447, 476], beats: 2, cut: 'slam' }, // "Projekti koje smo realizirali"
   { src: [476, 535], beats: 2, cut: 'whip' }, // → CNC.Quote card
   { src: [535, 560], beats: 2, cut: 'punch' }, // tap (slow-mo)
@@ -34,8 +34,8 @@ const CLIPS: Clip[] = [
   { src: [1120, 1179], beats: 2, cut: 'whip' }, // → ATTENTION card
   { src: [1179, 1204], beats: 2, cut: 'punch' },
   { src: [1204, 1391], beats: 8, cut: 'none', pump: true },
-  { src: [1420, 1522], beats: 4, cut: 'glitch' }, // clients fly-by
-  { src: [1522, 1600], beats: 4, cut: 'whip' }, // contact
+  { src: [1420, 1522], beats: 3, cut: 'glitch' }, // clients fly-by
+  { src: [1522, 1600], beats: 3, cut: 'whip' }, // contact
 ];
 const START_BEAT = 10; // tunnel exit / drop
 type Placed = Clip & { from: number; len: number; speed: number; beat: number };
@@ -151,8 +151,8 @@ const CutWalk: React.FC = () => {
 
   // motion: source scroll speed × re-time speed → output px/frame
   const outV = srcVel(sf) * c.speed * 2.5;
-  let blur = Math.min(38, outV * 0.14);
-  let split = Math.min(16, outV * 0.07);
+  let blur = c.sharp ? 0 : Math.min(38, outV * 0.14);
+  let split = c.sharp ? 0 : Math.min(16, outV * 0.07);
   let scale = 1;
   let shake = 0;
   let flash = 0;
@@ -198,7 +198,7 @@ const CutWalk: React.FC = () => {
   // beat pump on the kick (every beat) for pump clips
   if (c.pump) {
     const sinceBeat = (f - bF(START_BEAT)) % BEAT;
-    scale += 0.018 * Math.exp(-sinceBeat / 3);
+    scale += (c.sharp ? 0.008 : 0.018) * Math.exp(-sinceBeat / 3);
   }
   // project open: ice bloom
   let bloom = 0;
