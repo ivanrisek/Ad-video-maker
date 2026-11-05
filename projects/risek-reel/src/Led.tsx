@@ -189,7 +189,7 @@ const Icon: React.FC<{ name: string; size: number; glow?: number }> = ({ name, s
 
 // Six services with short names for the street; sub-items taken from risek-technology.com (#services)
 const SERVICES = [
-  { icon: 'web', name: ['WEB STRANICE', 'I APLIKACIJE'], items: ['Izrada web stranica', 'Izrada web aplikacija', 'Frontend razvoj'] },
+  { icon: 'web', name: ['APLIKACIJE', 'I WEB STRANICE'], items: ['Izrada web aplikacija', 'Izrada web stranica', 'Frontend razvoj'] },
   { icon: 'support', name: ['IT PODRŠKA', 'ZA TVRTKE'], items: ['Otklanjanje tehničkih problema', 'Održavanje IT infrastrukture', 'Podrška korisnicima'] },
   { icon: 'home', name: ['IT POMOĆ', 'ZA KUĆANSTVA'], items: ['Dijagnostika problema s računalom', 'Rješavanje sporog sustava', 'Problemi s internetom i mrežom'] },
   { icon: 'server', name: ['SERVERI', 'I MREŽE'], items: ['Postavljanje i održavanje servera', 'Mrežna konfiguracija', 'Nadzor sustava'] },
