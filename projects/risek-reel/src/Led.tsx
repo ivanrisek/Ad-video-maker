@@ -16,10 +16,40 @@ const AREA_H = LED_H - BAR_H - TICK_H; // content area above the ticker
 const PHONE = '095 544 2255';
 const WEB = 'risek-technology.com';
 const BLACK = '"Inter Display", "Helvetica Neue", Inter, Arial, sans-serif';
-const ICE = 'linear-gradient(100deg, #78afff 0%, #cfe0ff 45%, #ffffff 55%, #a9c9ff 75%, #78afff 100%)';
 
-// inline-block + top padding so the gradient also covers diacritics (Č, Ć, Š, Ž) above the line box
-const iceText: React.CSSProperties = { backgroundImage: ICE, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', display: 'inline-block', paddingTop: '0.16em', marginTop: '-0.16em' };
+// Text colours from risek-technology.com: headings --text-primary, copy --text-secondary, labels .section-label
+const TXT = '#c2c4c8';
+const TXT2 = '#8c9099';
+const LABEL = '#8a8a8a';
+// .hero-blue from the site: translucent blue with a white band sweeping across (hero-blue-shimmer, 7 s),
+// plus its soft blue text glow. Period 225 f (7.5 s) so four sweeps fit the 30 s loop exactly.
+// inline-block + top padding so the gradient also covers diacritics (Č, Ć, Š, Ž) above the line box.
+const Blue: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const f = useCurrentFrame();
+  // site uses no-repeat (the word briefly vanishes between sweeps); on the panel the pattern repeats so
+  // the text never disappears: one period (3× width) per sweep keeps the motion seamless.
+  const pos = 150 - 150 * ((f % 225) / 225);
+  return (
+    <span
+      style={{
+        backgroundImage: 'linear-gradient(100deg, rgba(120,175,255,0.5) 35%, #ffffff 50%, rgba(120,175,255,0.5) 65%)',
+        backgroundSize: '300% 100%',
+        backgroundRepeat: 'repeat-x',
+        backgroundPosition: `${pos.toFixed(2)}% 0`,
+        WebkitBackgroundClip: 'text',
+        backgroundClip: 'text',
+        color: 'transparent',
+        WebkitTextFillColor: 'transparent',
+        textShadow: '0 0 0.4em rgba(150,200,255,0.3)',
+        display: 'inline-block',
+        paddingTop: '0.16em',
+        marginTop: '-0.16em',
+      }}
+    >
+      {children}
+    </span>
+  );
+};
 
 // ───────── helpers ─────────
 const Slam: React.FC<{ from: number; to: number; children: React.ReactNode; style?: React.CSSProperties; out?: 'up' | 'zoom' | 'none' }> = ({ from, to, children, style, out = 'up' }) => {
@@ -174,7 +204,7 @@ const Ticker: React.FC = () => {
   const x = -((f / LED_TOTAL) * unitW);
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: BAR_H, height: TICK_H, background: 'rgba(7,10,20,0.92)', borderTop: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', left: x, whiteSpace: 'pre', fontFamily: MONO, fontWeight: 600, fontSize: 30, letterSpacing: '0.04em', color: '#aab4c6' }}>
+      <div style={{ position: 'absolute', left: x, whiteSpace: 'pre', fontFamily: MONO, fontWeight: 600, fontSize: 30, letterSpacing: '0.04em', color: TXT2 }}>
         {unit + unit + unit}
       </div>
     </div>
@@ -220,9 +250,9 @@ const Bar: React.FC = () => {
           >
             <PhoneIcon size={50} />
           </div>
-          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 104, letterSpacing: '-0.01em', color: '#ffffff', lineHeight: 1 }}>{PHONE}</div>
+          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 104, letterSpacing: '-0.01em', color: TXT, lineHeight: 1 }}>{PHONE}</div>
         </div>
-        <div style={{ fontFamily: BLACK, fontWeight: 700, fontSize: 48, color: '#c9d6ea', letterSpacing: '0.005em' }}>{WEB}</div>
+        <div style={{ fontFamily: BLACK, fontWeight: 700, fontSize: 48, color: TXT2, letterSpacing: '0.005em' }}>{WEB}</div>
       </div>
     </div>
   );
@@ -231,7 +261,7 @@ const Bar: React.FC = () => {
 // ───────── sections ─────────
 const Q: React.FC<{ from: number; to: number; lines: React.ReactNode[] }> = ({ from, to, lines }) => (
   <Slam from={from} to={to}>
-    <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 150, lineHeight: 1.02, letterSpacing: '-0.035em', color: '#ffffff' }}>
+    <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 150, lineHeight: 1.02, letterSpacing: '-0.035em', color: TXT }}>
       {lines.map((l, i) => (
         <div key={i}>{l}</div>
       ))}
@@ -254,21 +284,21 @@ const ServiceOne: React.FC<{ i: number; from: number; to: number }> = ({ i, from
           <div style={{ transform: `scale(${mix(0.5, 1, iconP).toFixed(4)}) rotate(${mix(-15, 0, iconP).toFixed(2)}deg)` }}>
             <Icon name={s.icon} size={92} />
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 40, letterSpacing: '0.2em', color: '#78afff' }}>
+          <div style={{ fontFamily: MONO, fontSize: 40, letterSpacing: '0.2em', color: LABEL }}>
             0{i + 1} / 0{SERVICES.length}
           </div>
         </div>
-        <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 120, lineHeight: 0.98, letterSpacing: '-0.03em', color: '#ffffff', whiteSpace: 'nowrap' }}>
+        <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 120, lineHeight: 0.98, letterSpacing: '-0.03em', color: TXT, whiteSpace: 'nowrap' }}>
           <Sheen at={from + 10}>
             <div>{s.name[0]}</div>
-            <div style={iceText}>{s.name[1]}</div>
+            <div><Blue>{s.name[1]}</Blue></div>
           </Sheen>
         </div>
         <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', gap: 6 }}>
           {s.items.map((it, k) => {
             const ip = ramp(f, from + 8 + k * 3, 10, EASE.out);
             return (
-              <div key={k} style={{ fontFamily: BLACK, fontWeight: 600, fontSize: 40, color: '#c9d6ea', opacity: ip, transform: `translateX(${((1 - ip) * 40).toFixed(1)}px)`, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div key={k} style={{ fontFamily: BLACK, fontWeight: 600, fontSize: 40, color: TXT2, opacity: ip, transform: `translateX(${((1 - ip) * 40).toFixed(1)}px)`, display: 'flex', alignItems: 'center', gap: 16 }}>
                 <span style={{ width: 12, height: 12, borderRadius: 3, background: '#78afff', boxShadow: '0 0 10px #78afff' }} />
                 {it}
               </div>
@@ -319,9 +349,9 @@ const ServiceGrid: React.FC<{ from: number; to: number }> = ({ from, to }) => {
             }}
           >
             <Icon name={s.icon} size={104} glow={0.6 + lit} />
-            <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 46, lineHeight: 1.04, letterSpacing: '-0.01em', color: '#ffffff', whiteSpace: 'nowrap' }}>
+            <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 46, lineHeight: 1.04, letterSpacing: '-0.01em', color: TXT, whiteSpace: 'nowrap' }}>
               <div>{s.name[0]}</div>
-              <div style={iceText}>{s.name[1]}</div>
+              <div><Blue>{s.name[1]}</Blue></div>
             </div>
           </div>
         );
@@ -353,13 +383,13 @@ const Trust: React.FC<{ from: number; to: number }> = ({ from, to }) => {
           fontWeight: 900,
           fontSize: 116,
           letterSpacing: '-0.03em',
-          color: '#ffffff',
+          color: TXT,
           opacity: title,
           transform: `scale(${mix(1.15, 1, title).toFixed(4)})`,
           filter: title < 0.999 ? `blur(${((1 - title) * 12).toFixed(2)}px)` : undefined,
         }}
       >
-        Vjeruju <span style={iceText}>nam:</span>
+        Vjeruju <Blue>nam:</Blue>
       </div>
       <div style={{ position: 'absolute', left: 90, right: 90, top: 270, height: 400, display: 'flex', justifyContent: 'space-between' }}>
         {LOGOS.map((l, i) => {
@@ -408,8 +438,8 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
           <Img src={staticFile('img/led/risek.png')} style={{ height: 200, display: 'block' }} />
         </Sheen>
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 285, textAlign: 'center', fontFamily: BLACK, fontWeight: 800, fontSize: 62, letterSpacing: '0.005em', color: '#ffffff', ...rise(e(10)) }}>
-        Besplatna konzultacija <span style={{ color: '#8c9099' }}>· bez obveze</span>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 285, textAlign: 'center', fontFamily: BLACK, fontWeight: 800, fontSize: 62, letterSpacing: '0.005em', color: TXT, ...rise(e(10)) }}>
+        Besplatna konzultacija <span style={{ color: TXT2 }}>· bez obveze</span>
       </div>
       <div
         style={{
@@ -423,17 +453,16 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
           fontSize: 200,
           lineHeight: 1,
           letterSpacing: '-0.02em',
-          ...iceText,
           filter: `drop-shadow(0 0 ${(20 + 25 * pulse).toFixed(1)}px rgba(120,175,255,${(0.35 + 0.3 * pulse).toFixed(2)}))`,
           ...{ opacity: e(16), transform: `scale(${mix(1.12, 1, e(16)).toFixed(4)})` },
         }}
       >
-        {PHONE}
+        <Blue>{PHONE}</Blue>
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 600, textAlign: 'center', fontFamily: BLACK, fontWeight: 700, fontSize: 54, color: '#c9d6ea', ...rise(e(24)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 600, textAlign: 'center', fontFamily: BLACK, fontWeight: 700, fontSize: 54, color: TXT, ...rise(e(24)) }}>
         info@risek-technology.com
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 690, textAlign: 'center', fontFamily: MONO, fontSize: 32, letterSpacing: '0.22em', color: '#8c9099', ...rise(e(30)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 690, textAlign: 'center', fontFamily: MONO, fontSize: 32, letterSpacing: '0.22em', color: LABEL, ...rise(e(30)) }}>
         KRAPINA · HRVATSKA
       </div>
     </div>
@@ -487,14 +516,14 @@ export const RisekLed: React.FC = () => {
         )}
 
         {/* 2–8 s: questions */}
-        <Q from={60} to={105} lines={[<>Računalo</>, <span style={iceText}>ne radi?</span>]} />
-        <Q from={105} to={150} lines={[<>Posao u firmi</>, <>još <span style={iceText}>na papiru?</span></>]} />
-        <Q from={150} to={195} lines={[<>Nemate</>, <span style={iceText}>web stranicu?</span>]} />
-        <Q from={195} to={240} lines={[<>Spremni za</>, <span style={iceText}>budućnost?</span>]} />
+        <Q from={60} to={105} lines={[<>Računalo</>, <Blue>ne radi?</Blue>]} />
+        <Q from={105} to={150} lines={[<>Posao u firmi</>, <>još <Blue>na papiru?</Blue></>]} />
+        <Q from={150} to={195} lines={[<>Nemate</>, <Blue>web stranicu?</Blue>]} />
+        <Q from={195} to={240} lines={[<>Spremni za</>, <Blue>budućnost?</Blue>]} />
 
         {/* 8–10 s: answer + logo */}
         <Slam from={240} to={270} out="zoom" style={{ alignItems: 'flex-start', paddingTop: 40 }}>
-          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 190, letterSpacing: '-0.04em', ...iceText, filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.8))' }}>Mi smo spremni.</div>
+          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 190, letterSpacing: '-0.04em', filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.8))' }}><Blue>Mi smo spremni.</Blue></div>
         </Slam>
         {f >= 270 && f < 300 && (
           <div
