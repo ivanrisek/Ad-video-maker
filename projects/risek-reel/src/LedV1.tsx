@@ -162,7 +162,7 @@ const SERVICES = [
   { icon: 'web', name: ['APLIKACIJE', 'I WEB STRANICE'], items: ['Izrada web aplikacija', 'Izrada web stranica', 'Frontend razvoj'] },
   { icon: 'support', name: ['IT PODRŠKA', 'ZA TVRTKE'], items: ['Otklanjanje tehničkih problema', 'Održavanje IT infrastrukture', 'Podrška korisnicima'] },
   { icon: 'home', name: ['IT POMOĆ', 'ZA KUĆANSTVA'], items: ['Dijagnostika problema s računalom', 'Rješavanje sporog sustava', 'Problemi s internetom i mrežom'] },
-  { icon: 'server', name: ['SERVERI', 'I MREŽE'], items: ['Postavljanje i održavanje servera', 'Mrežna konfiguracija', 'Nadzor sustava'] },
+  { icon: 'server', name: ['IT INFRASTRUKTURA', 'I ODRŽAVANJE'], items: ['Postavljanje i održavanje servera', 'Mrežna konfiguracija', 'Nadzor sustava'] },
   { icon: 'auto', name: ['AUTOMATIZACIJA', 'POSLOVANJA'], items: ['Automatizacija ponavljajućih zadataka', 'Automatizacija radnih procesa', 'Integracije između alata'] },
   { icon: 'ai', name: ['AI', 'RJEŠENJA'], items: ['Analiza gdje AI stvarno pomaže', 'Uvođenje AI asistenta u procese', 'Automatizacija odgovora'] },
 ];
@@ -262,11 +262,11 @@ const ServiceOne: React.FC<{ i: number; from: number; to: number }> = ({ i, from
             0{i + 1} / 0{SERVICES.length}
           </div>
         </div>
-        <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 120, lineHeight: 0.98, letterSpacing: '-0.03em', color: '#ffffff', whiteSpace: 'nowrap' }}>
-          <Sheen at={from + 10}>
+        <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: Math.min(120, 1180 / (Math.max(...s.name.map((n) => n.length)) * 0.64)), lineHeight: 0.98, letterSpacing: '-0.03em', color: '#ffffff', whiteSpace: 'nowrap' }}>
+          <>
             <div>{s.name[0]}</div>
             <div style={iceText}>{s.name[1]}</div>
-          </Sheen>
+          </>
         </div>
         <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', gap: 6 }}>
           {s.items.map((it, k) => {
@@ -323,7 +323,7 @@ const ServiceGrid: React.FC<{ from: number; to: number }> = ({ from, to }) => {
             }}
           >
             <Icon name={s.icon} size={104} glow={0.6 + lit} />
-            <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 46, lineHeight: 1.04, letterSpacing: '-0.01em', color: '#ffffff', whiteSpace: 'nowrap' }}>
+            <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: Math.min(46, 480 / (Math.max(...s.name.map((n) => n.length)) * 0.64)), lineHeight: 1.04, letterSpacing: '-0.01em', color: '#ffffff', whiteSpace: 'nowrap' }}>
               <div>{s.name[0]}</div>
               <div style={iceText}>{s.name[1]}</div>
             </div>
