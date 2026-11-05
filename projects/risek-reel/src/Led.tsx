@@ -86,7 +86,8 @@ const Flash: React.FC<{ at: number; strength?: number }> = ({ at, strength = 0.8
   return <AbsoluteFill style={{ background: '#eef5ff', opacity: strength * Math.exp(-k / 3) }} />;
 };
 
-const Sheen: React.FC<{ at: number; dur?: number; children: React.ReactNode }> = ({ at, dur = 18, children }) => {
+// mask: image path — the sweep is clipped to that image's alpha (logos), otherwise it is clipped to text via overlay
+const Sheen: React.FC<{ at: number; dur?: number; mask?: string; children: React.ReactNode }> = ({ at, dur = 18, mask, children }) => {
   const f = useCurrentFrame();
   const t = ramp(f, at, dur, EASE.smooth);
   const active = f >= at && f <= at + dur;
@@ -100,8 +101,11 @@ const Sheen: React.FC<{ at: number; dur?: number; children: React.ReactNode }> =
             position: 'absolute',
             inset: 0,
             background: `linear-gradient(105deg, transparent ${-30 + t * 160 - 12}%, rgba(255,255,255,0.85) ${-30 + t * 160}%, transparent ${-30 + t * 160 + 12}%)`,
-            mixBlendMode: 'overlay',
+            mixBlendMode: mask ? 'screen' : 'overlay',
             pointerEvents: 'none',
+            ...(mask
+              ? { WebkitMaskImage: `url(${staticFile(mask)})`, maskImage: `url(${staticFile(mask)})`, WebkitMaskSize: '100% 100%', maskSize: '100% 100%', WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat' }
+              : {}),
           }}
         />
       )}
@@ -411,7 +415,7 @@ const Trust: React.FC<{ from: number; to: number }> = ({ from, to }) => {
                 transform: `translateY(${((1 - p) * 80).toFixed(1)}px) scale(${mix(0.8, 1, p).toFixed(4)})`,
               }}
             >
-              <Sheen at={from + 40 + i * 6} dur={20}>
+              <Sheen at={from + 40 + i * 6} dur={20} mask={l.src}>
                 <Img src={staticFile(l.src)} style={{ height: l.h, maxWidth: 470, objectFit: 'contain', display: 'block' }} />
               </Sheen>
             </div>
@@ -434,7 +438,7 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
     <div style={{ position: 'absolute', inset: 0, opacity: 1 - endFade }}>
       <AbsoluteFill style={{ background: `radial-gradient(ellipse 55% 45% at 50% 45%, rgba(${C.iceRGB},${(0.14 * lp).toFixed(3)}), rgba(7,10,20,0) 72%)` }} />
       <div style={{ position: 'absolute', left: 0, right: 0, top: 40, display: 'flex', justifyContent: 'center', opacity: lp, transform: `scale(${mix(1.25, 1, lp).toFixed(4)})`, filter: lp < 0.999 ? `blur(${((1 - lp) * 14).toFixed(2)}px)` : undefined }}>
-        <Sheen at={from + 16} dur={22}>
+        <Sheen at={from + 16} dur={22} mask="img/led/risek.png">
           <Img src={staticFile('img/led/risek.png')} style={{ height: 200, display: 'block' }} />
         </Sheen>
       </div>
@@ -509,7 +513,7 @@ export const RisekLed: React.FC = () => {
               filter: lp < 0.999 || lq > 0 ? `blur(${((1 - lp) * 18 + lq * 14).toFixed(2)}px)` : undefined,
             }}
           >
-            <Sheen at={20} dur={22}>
+            <Sheen at={20} dur={22} mask="img/led/risek.png">
               <Img src={staticFile('img/led/risek.png')} style={{ height: 300, display: 'block' }} />
             </Sheen>
           </div>
@@ -526,21 +530,23 @@ export const RisekLed: React.FC = () => {
           <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 190, letterSpacing: '-0.04em', filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.8))' }}><Blue>Mi smo spremni.</Blue></div>
         </Slam>
         {f >= 270 && f < 300 && (
+          <AbsoluteFill style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(7,10,20,0.55), rgba(7,10,20,0.9) 100%)', opacity: logo2 * (1 - logo2q) }} />
+        )}
+        {f >= 270 && f < 300 && (
           <div
             style={{
               position: 'absolute',
               inset: 0,
               display: 'flex',
-              alignItems: 'flex-start',
-              paddingTop: 50,
+              alignItems: 'center',
               justifyContent: 'center',
               opacity: logo2 * (1 - logo2q),
               transform: `scale(${mix(1.4, 1, logo2).toFixed(4)})`,
               filter: logo2 < 0.999 || logo2q > 0 ? `blur(${((1 - logo2) * 16 + logo2q * 12).toFixed(2)}px)` : undefined,
             }}
           >
-            <Sheen at={276} dur={18}>
-              <Img src={staticFile('img/led/risek.png')} style={{ height: 260, display: 'block', filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.9))' }} />
+            <Sheen at={276} dur={18} mask="img/led/risek.png">
+              <Img src={staticFile('img/led/risek.png')} style={{ height: 520, display: 'block', filter: 'drop-shadow(0 0 40px rgba(120,175,255,0.45)) drop-shadow(0 10px 40px rgba(0,0,0,0.9))' }} />
             </Sheen>
           </div>
         )}
