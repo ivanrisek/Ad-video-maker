@@ -398,6 +398,20 @@ const Trust: React.FC<{ from: number; to: number }> = ({ from, to }) => {
   );
 };
 
+// contact-row icons (24 grid, stroked): phone, envelope, globe
+const CONTACT_ICONS: Record<string, string[]> = {
+  phone: ['M5 3h3l2 5-2.5 1.5a11 11 0 0 0 7 7L16 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z'],
+  mail: ['M3 5h18v14H3z', 'M3 6l9 7 9-7'],
+  web: ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M3 12h18', 'M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9', 'M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9'],
+};
+const ContactIcon: React.FC<{ name: string; size: number }> = ({ name, size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    {CONTACT_ICONS[name].map((d, i) => (
+      <path key={i} d={d} stroke="#a9ccff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    ))}
+  </svg>
+);
+
 const ContactCard: React.FC<{ from: number }> = ({ from }) => {
   const f = useCurrentFrame();
   if (f < from) return null;
@@ -409,37 +423,44 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
   return (
     <div style={{ position: 'absolute', inset: 0, opacity: 1 - endFade }}>
       <AbsoluteFill style={{ background: `radial-gradient(ellipse 55% 45% at 50% 45%, rgba(${C.iceRGB},${(0.14 * lp).toFixed(3)}), rgba(7,10,20,0) 72%)` }} />
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 40 + OY, display: 'flex', justifyContent: 'center', opacity: lp, transform: `scale(${mix(1.25, 1, lp).toFixed(4)})`, filter: lp < 0.999 ? `blur(${((1 - lp) * 14).toFixed(2)}px)` : undefined }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 22 + OY, display: 'flex', justifyContent: 'center', opacity: lp, transform: `scale(${mix(1.25, 1, lp).toFixed(4)})`, filter: lp < 0.999 ? `blur(${((1 - lp) * 14).toFixed(2)}px)` : undefined }}>
         <Sheen at={from + 16} dur={22} mask="img/led/risek.png">
-          <Img src={staticFile('img/led/risek.png')} style={{ height: 200, display: 'block' }} />
+          <Img src={staticFile('img/led/risek.png')} style={{ height: 170, display: 'block' }} />
         </Sheen>
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 285 + OY, textAlign: 'center', fontFamily: BLACK, fontWeight: 800, fontSize: 62, letterSpacing: '0.005em', color: '#ffffff', ...rise(e(10)) }}>
-        Besplatna konzultacija <span style={{ color: '#8c9099' }}>· bez obveze</span>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 215 + OY, textAlign: 'center', fontFamily: BLACK, fontWeight: 800, fontSize: 58, letterSpacing: '0.005em', color: '#ffffff', ...rise(e(8)) }}>
+        Besplatna konzultacija <span style={{ color: '#c9d6ea' }}>· bez obveze</span>
       </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 370 + OY,
-          textAlign: 'center',
-          fontFamily: BLACK,
-          fontWeight: 900,
-          fontSize: 200,
-          lineHeight: 1,
-          letterSpacing: '-0.02em',
-          ...iceText,
-          filter: `drop-shadow(0 0 ${(20 + 25 * pulse).toFixed(1)}px rgba(120,175,255,${(0.35 + 0.3 * pulse).toFixed(2)}))`,
-          ...{ opacity: e(16), transform: `scale(${mix(1.12, 1, e(16)).toFixed(4)})` },
-        }}
-      >
-        {PHONE}
+      {/* phone, e-mail and web as three equally clear rows (sized to read on the 720×480 panel) */}
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 318 + OY, display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 30 }}>
+          {[
+            { icon: 'phone', text: <><span style={iceText}>{PHONE}</span></>, size: 112, delay: 14 },
+            { icon: 'mail', text: <>info@risek-technology.com</>, size: 88, delay: 20 },
+            { icon: 'web', text: <>{WEB}</>, size: 88, delay: 26 },
+          ].map((r) => (
+            <div key={r.icon} style={{ display: 'flex', alignItems: 'center', gap: 34, ...rise(e(r.delay)) }}>
+              <div
+                style={{
+                  width: 112,
+                  height: 112,
+                  borderRadius: 99,
+                  border: '3px solid rgba(120,175,255,0.75)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: `0 0 ${(16 + 18 * pulse).toFixed(1)}px rgba(120,175,255,${(0.3 + 0.3 * pulse).toFixed(2)})`,
+                  flexShrink: 0,
+                }}
+              >
+                <ContactIcon name={r.icon} size={60} />
+              </div>
+              <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: r.size, lineHeight: 1, letterSpacing: '-0.015em', color: '#ffffff', whiteSpace: 'nowrap' }}>{r.text}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 600 + OY, textAlign: 'center', fontFamily: BLACK, fontWeight: 700, fontSize: 54, color: '#c9d6ea', ...rise(e(24)) }}>
-        info@risek-technology.com
-      </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 690 + OY, textAlign: 'center', fontFamily: MONO, fontSize: 32, letterSpacing: '0.22em', color: '#8c9099', ...rise(e(30)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 790 + OY, textAlign: 'center', fontFamily: MONO, fontSize: 34, letterSpacing: '0.22em', color: '#8c9099', ...rise(e(32)) }}>
         KRAPINA · HRVATSKA
       </div>
     </div>
