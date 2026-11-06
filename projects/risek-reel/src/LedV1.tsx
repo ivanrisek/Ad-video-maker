@@ -8,11 +8,13 @@ import { EASE, ramp, mix } from './lib/Polish';
 import { C, MONO } from './brand';
 
 const LED_W = 1920;
-const LED_H = 1080;
+const LED_H = 1280; // 3:2 master for the 720×480 panel (rendered 1920×1280, scaled down 0.375×)
 const LED_TOTAL = 900;
-const BAR_H = 200;
-const TICK_H = 62; // site-style services ticker between content and bar
+const BAR_H = 240;
+const TICK_H = 72; // site-style services ticker between content and bar
 const AREA_H = LED_H - BAR_H - TICK_H; // content area above the ticker
+const OY = (AREA_H - 820) / 2; // layouts were drawn for an 820 px area; centre them in the taller 3:2 area
+const CW = Math.round((496 * AREA_H) / 880); // cable-helix column width at full area height
 const PHONE = '095 544 2255';
 const WEB = 'risek-technology.com';
 const BLACK = '"Inter Display", "Helvetica Neue", Inter, Arial, sans-serif';
@@ -100,14 +102,14 @@ const Cables: React.FC = () => {
   const f = useCurrentFrame();
   const o = ramp(f, 0, 12, EASE.out) * (1 - ramp(f, 176, 12, EASE.exit));
   const col = (left: number, flip: boolean) => (
-    <div style={{ position: 'absolute', left, top: 0, width: 496, height: AREA_H, opacity: 0.75 * o, transform: flip ? 'scaleX(-1)' : undefined, WebkitMaskImage: 'linear-gradient(90deg, #000 40%, transparent 100%)', maskImage: 'linear-gradient(90deg, #000 40%, transparent 100%)' }}>
-      <OffthreadVideo src={staticFile('video/led/cables.mp4')} muted style={{ width: 496, height: 880, display: 'block', marginTop: (AREA_H - 880) / 2 }} />
+    <div style={{ position: 'absolute', left, top: 0, width: CW, height: AREA_H, opacity: 0.75 * o, transform: flip ? 'scaleX(-1)' : undefined, WebkitMaskImage: 'linear-gradient(90deg, #000 40%, transparent 100%)', maskImage: 'linear-gradient(90deg, #000 40%, transparent 100%)' }}>
+      <OffthreadVideo src={staticFile('video/led/cables.mp4')} muted style={{ width: CW, height: AREA_H, display: 'block' }} />
     </div>
   );
   return (
     <>
       {col(-40, false)}
-      {col(LED_W - 456, true)}
+      {col(LED_W - CW + 40, true)}
     </>
   );
 };
@@ -133,7 +135,7 @@ const Worker: React.FC = () => {
         transform: `translateX(${((1 - p) * -80 - q * 60).toFixed(1)}px)`,
       }}
     >
-      <OffthreadVideo src={staticFile('video/led/worker.mp4')} muted playbackRate={0.8} style={{ width: 500, height: 880, objectFit: 'cover', display: 'block', marginTop: -40 }} />
+      <OffthreadVideo src={staticFile('video/led/worker.mp4')} muted playbackRate={0.8} style={{ width: 500, height: AREA_H - 80, objectFit: 'cover', display: 'block' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(7,10,20,0) 60%, rgba(7,10,20,0.6) 100%)' }} />
     </div>
   );
@@ -173,12 +175,12 @@ const Ticker: React.FC = () => {
   const f = useCurrentFrame();
   const unit = TICKER.map((t) => `${t}   //   `).join('');
   // one full unit per 30 s loop → the ticker is seamless when the panel restarts the clip
-  const CHAR_W = 30 * 0.6 + 30 * 0.04; // JetBrains Mono advance + letter-spacing
+  const CHAR_W = 38 * 0.6 + 38 * 0.04; // JetBrains Mono advance + letter-spacing
   const unitW = unit.length * CHAR_W;
   const x = -((f / LED_TOTAL) * unitW);
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: BAR_H, height: TICK_H, background: 'rgba(7,10,20,0.92)', borderTop: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', left: x, whiteSpace: 'pre', fontFamily: MONO, fontWeight: 600, fontSize: 30, letterSpacing: '0.04em', color: '#aab4c6' }}>
+      <div style={{ position: 'absolute', left: x, whiteSpace: 'pre', fontFamily: MONO, fontWeight: 600, fontSize: 38, letterSpacing: '0.04em', color: '#aab4c6' }}>
         {unit + unit + unit}
       </div>
     </div>
@@ -205,10 +207,10 @@ const Bar: React.FC = () => {
       <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 3, background: 'rgba(120,175,255,0.55)', boxShadow: '0 0 24px rgba(120,175,255,0.6)' }} />
       <div style={{ position: 'absolute', top: -2, height: 7, width: 420, left: `${(-420 + t * (LED_W + 840)).toFixed(1)}px`, background: 'linear-gradient(90deg, rgba(255,255,255,0), #ffffff, rgba(255,255,255,0))', filter: 'blur(2px)' }} />
       <div style={{ position: 'absolute', left: 70, top: 0, bottom: 0, display: 'flex', alignItems: 'center' }}>
-        <Img src={staticFile('img/led/risek.png')} style={{ height: 112 }} />
+        <Img src={staticFile('img/led/risek.png')} style={{ height: 136 }} />
       </div>
-      <div style={{ position: 'absolute', left: 690, top: 40, bottom: 40, width: 2, background: 'rgba(255,255,255,0.14)' }} />
-      <div style={{ position: 'absolute', right: 80, top: 0, bottom: 0, display: 'flex', alignItems: 'center', gap: 56 }}>
+      <div style={{ position: 'absolute', left: 770, top: 46, bottom: 46, width: 2, background: 'rgba(255,255,255,0.14)' }} />
+      <div style={{ position: 'absolute', right: 80, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', gap: 6 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
           <div
             style={{
@@ -224,9 +226,9 @@ const Bar: React.FC = () => {
           >
             <PhoneIcon size={50} />
           </div>
-          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 104, letterSpacing: '-0.01em', color: '#ffffff', lineHeight: 1 }}>{PHONE}</div>
+          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 118, letterSpacing: '-0.01em', color: '#ffffff', lineHeight: 1 }}>{PHONE}</div>
         </div>
-        <div style={{ fontFamily: BLACK, fontWeight: 700, fontSize: 48, color: '#c9d6ea', letterSpacing: '0.005em' }}>{WEB}</div>
+        <div style={{ fontFamily: BLACK, fontWeight: 700, fontSize: 46, color: '#c9d6ea', letterSpacing: '0.005em' }}>{WEB}</div>
       </div>
     </div>
   );
@@ -272,7 +274,7 @@ const ServiceOne: React.FC<{ i: number; from: number; to: number }> = ({ i, from
           {s.items.map((it, k) => {
             const ip = ramp(f, from + 8 + k * 3, 10, EASE.out);
             return (
-              <div key={k} style={{ fontFamily: BLACK, fontWeight: 600, fontSize: 40, color: '#c9d6ea', opacity: ip, transform: `translateX(${((1 - ip) * 40).toFixed(1)}px)`, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div key={k} style={{ fontFamily: BLACK, fontWeight: 600, fontSize: 50, color: '#c9d6ea', opacity: ip, transform: `translateX(${((1 - ip) * 40).toFixed(1)}px)`, display: 'flex', alignItems: 'center', gap: 16 }}>
                 <span style={{ width: 12, height: 12, borderRadius: 3, background: '#78afff', boxShadow: '0 0 10px #78afff' }} />
                 {it}
               </div>
@@ -351,7 +353,7 @@ const Trust: React.FC<{ from: number; to: number }> = ({ from, to }) => {
           position: 'absolute',
           left: 0,
           right: 0,
-          top: 60,
+          top: 60 + OY,
           textAlign: 'center',
           fontFamily: BLACK,
           fontWeight: 900,
@@ -365,7 +367,7 @@ const Trust: React.FC<{ from: number; to: number }> = ({ from, to }) => {
       >
         Vjeruju <span style={iceText}>nam:</span>
       </div>
-      <div style={{ position: 'absolute', left: 90, right: 90, top: 270, height: 400, display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ position: 'absolute', left: 90, right: 90, top: 270 + OY, height: 400, display: 'flex', justifyContent: 'space-between' }}>
         {LOGOS.map((l, i) => {
           const p = ramp(f, from + 10 + i * 7, 12, EASE.overshoot);
           return (
@@ -407,12 +409,12 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
   return (
     <div style={{ position: 'absolute', inset: 0, opacity: 1 - endFade }}>
       <AbsoluteFill style={{ background: `radial-gradient(ellipse 55% 45% at 50% 45%, rgba(${C.iceRGB},${(0.14 * lp).toFixed(3)}), rgba(7,10,20,0) 72%)` }} />
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 40, display: 'flex', justifyContent: 'center', opacity: lp, transform: `scale(${mix(1.25, 1, lp).toFixed(4)})`, filter: lp < 0.999 ? `blur(${((1 - lp) * 14).toFixed(2)}px)` : undefined }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 40 + OY, display: 'flex', justifyContent: 'center', opacity: lp, transform: `scale(${mix(1.25, 1, lp).toFixed(4)})`, filter: lp < 0.999 ? `blur(${((1 - lp) * 14).toFixed(2)}px)` : undefined }}>
         <Sheen at={from + 16} dur={22} mask="img/led/risek.png">
           <Img src={staticFile('img/led/risek.png')} style={{ height: 200, display: 'block' }} />
         </Sheen>
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 285, textAlign: 'center', fontFamily: BLACK, fontWeight: 800, fontSize: 62, letterSpacing: '0.005em', color: '#ffffff', ...rise(e(10)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 285 + OY, textAlign: 'center', fontFamily: BLACK, fontWeight: 800, fontSize: 62, letterSpacing: '0.005em', color: '#ffffff', ...rise(e(10)) }}>
         Besplatna konzultacija <span style={{ color: '#8c9099' }}>· bez obveze</span>
       </div>
       <div
@@ -420,7 +422,7 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
           position: 'absolute',
           left: 0,
           right: 0,
-          top: 370,
+          top: 370 + OY,
           textAlign: 'center',
           fontFamily: BLACK,
           fontWeight: 900,
@@ -434,10 +436,10 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
       >
         {PHONE}
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 600, textAlign: 'center', fontFamily: BLACK, fontWeight: 700, fontSize: 54, color: '#c9d6ea', ...rise(e(24)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 600 + OY, textAlign: 'center', fontFamily: BLACK, fontWeight: 700, fontSize: 54, color: '#c9d6ea', ...rise(e(24)) }}>
         info@risek-technology.com
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 690, textAlign: 'center', fontFamily: MONO, fontSize: 32, letterSpacing: '0.22em', color: '#8c9099', ...rise(e(30)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 690 + OY, textAlign: 'center', fontFamily: MONO, fontSize: 32, letterSpacing: '0.22em', color: '#8c9099', ...rise(e(30)) }}>
         KRAPINA · HRVATSKA
       </div>
     </div>
