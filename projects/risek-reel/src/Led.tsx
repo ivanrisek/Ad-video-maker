@@ -240,25 +240,22 @@ const Bar: React.FC = () => {
         <Img src={staticFile('img/led/risek.png')} style={{ height: 136 }} />
       </div>
       <div style={{ position: 'absolute', left: 770, top: 46, bottom: 46, width: 2, background: 'rgba(255,255,255,0.14)' }} />
-      <div style={{ position: 'absolute', right: 80, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', gap: 6 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
-          <div
-            style={{
-              width: 92,
-              height: 92,
-              borderRadius: 99,
-              border: '2px solid rgba(120,175,255,0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: `0 0 ${(14 + 18 * ringPulse).toFixed(1)}px rgba(120,175,255,${(0.35 + 0.35 * ringPulse).toFixed(2)})`,
-            }}
-          >
-            <PhoneIcon size={50} />
-          </div>
-          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 118, letterSpacing: '-0.01em', color: TXT, lineHeight: 1 }}>{PHONE}</div>
+      <div style={{ position: 'absolute', right: 80, top: 0, bottom: 0, display: 'flex', alignItems: 'center' }}>
+        {/* phone, e-mail and web stacked (sized to stay readable on the 720×480 panel) */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
+          {[
+            { icon: 'phone', text: PHONE, size: 74, icon_px: 56, weight: 900 },
+            { icon: 'mail', text: 'info@risek-technology.com', size: 54, icon_px: 44, weight: 800 },
+            { icon: 'web', text: WEB, size: 54, icon_px: 44, weight: 800 },
+          ].map((r) => (
+            <div key={r.icon} style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <div style={{ width: 60, display: 'flex', justifyContent: 'center', filter: `drop-shadow(0 0 ${(8 + 10 * ringPulse).toFixed(1)}px rgba(120,175,255,${(0.35 + 0.3 * ringPulse).toFixed(2)}))` }}>
+                <ContactIcon name={r.icon} size={r.icon_px} />
+              </div>
+              <div style={{ fontFamily: BLACK, fontWeight: r.weight, fontSize: r.size, letterSpacing: '-0.01em', color: TXT, lineHeight: 1, whiteSpace: 'nowrap' }}>{r.text}</div>
+            </div>
+          ))}
         </div>
-        <div style={{ fontFamily: BLACK, fontWeight: 700, fontSize: 46, color: TXT2, letterSpacing: '0.005em' }}>{WEB}</div>
       </div>
     </div>
   );
