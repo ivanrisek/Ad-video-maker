@@ -11,7 +11,7 @@ export const LED_W = 1920;
 export const LED_H = 1280; // 3:2 master for the 720×480 panel (rendered 1920×1280, scaled down 0.375×)
 export const LED_TOTAL = 900;
 const BAR_H = 240;
-const TICK_H = 72; // site-style services ticker between content and bar
+const TICK_H = 0; // ticker removed: too small to read on the 720×480 panel
 const AREA_H = LED_H - BAR_H - TICK_H; // content area above the ticker
 const OY = (AREA_H - 820) / 2; // layouts were drawn for an 820 px area; centre them in the taller 3:2 area
 const CW = Math.round((496 * AREA_H) / 880); // cable-helix column width at full area height
@@ -232,6 +232,8 @@ const Bar: React.FC = () => {
   const f = useCurrentFrame();
   const t = (f % 150) / 150; // a light runs along the top edge every 5 s
   const ringPulse = 0.5 + 0.5 * Math.sin(f / 10);
+  // contacts step aside during the contact card (no duplicate), and are back by the loop point
+  const contactsVis = f < 716 ? 1 : f < 726 ? 1 - (f - 716) / 10 : f < 886 ? 0 : (f - 886) / 14;
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: BAR_H, background: 'linear-gradient(180deg, #0e1530 0%, #070a14 100%)' }}>
       <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 3, background: 'rgba(120,175,255,0.55)', boxShadow: '0 0 24px rgba(120,175,255,0.6)' }} />
@@ -239,8 +241,8 @@ const Bar: React.FC = () => {
       <div style={{ position: 'absolute', left: 70, top: 0, bottom: 0, display: 'flex', alignItems: 'center' }}>
         <Img src={staticFile('img/led/risek.png')} style={{ height: 136 }} />
       </div>
-      <div style={{ position: 'absolute', left: 770, top: 46, bottom: 46, width: 2, background: 'rgba(255,255,255,0.14)' }} />
-      <div style={{ position: 'absolute', right: 80, top: 0, bottom: 0, display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'absolute', left: 770, top: 46, bottom: 46, width: 2, background: 'rgba(255,255,255,0.14)', opacity: contactsVis }} />
+      <div style={{ position: 'absolute', right: 80, top: 0, bottom: 0, display: 'flex', alignItems: 'center', opacity: contactsVis }}>
         {/* phone, e-mail and web stacked (sized to stay readable on the 720×480 panel) */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
           {[
@@ -264,7 +266,7 @@ const Bar: React.FC = () => {
 // ───────── sections ─────────
 const Q: React.FC<{ from: number; to: number; lines: React.ReactNode[] }> = ({ from, to, lines }) => (
   <Slam from={from} to={to}>
-    <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 150, lineHeight: 1.02, letterSpacing: '-0.035em', color: TXT }}>
+    <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 210, lineHeight: 1.0, letterSpacing: '-0.035em', color: TXT }}>
       {lines.map((l, i) => (
         <div key={i}>{l}</div>
       ))}
@@ -285,28 +287,17 @@ const ServiceOne: React.FC<{ i: number; from: number; to: number }> = ({ i, from
       <div style={{ position: 'absolute', left: 660, right: 60, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 16 }}>
           <div style={{ transform: `scale(${mix(0.5, 1, iconP).toFixed(4)}) rotate(${mix(-15, 0, iconP).toFixed(2)}deg)` }}>
-            <Icon name={s.icon} size={92} />
+            <Icon name={s.icon} size={110} />
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 40, letterSpacing: '0.2em', color: LABEL }}>
+          <div style={{ fontFamily: MONO, fontSize: 48, letterSpacing: '0.2em', color: LABEL }}>
             0{i + 1} / 0{SERVICES.length}
           </div>
         </div>
-        <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: Math.min(120, 1180 / (Math.max(...s.name.map((n) => n.length)) * 0.64)), lineHeight: 0.98, letterSpacing: '-0.03em', color: TXT, whiteSpace: 'nowrap' }}>
+        <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: Math.min(160, 1180 / (Math.max(...s.name.map((n) => n.length)) * 0.62)), lineHeight: 0.98, letterSpacing: '-0.03em', color: TXT, whiteSpace: 'nowrap' }}>
           <>
             <div>{s.name[0]}</div>
             <div><Blue>{s.name[1]}</Blue></div>
           </>
-        </div>
-        <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {s.items.map((it, k) => {
-            const ip = ramp(f, from + 8 + k * 3, 10, EASE.out);
-            return (
-              <div key={k} style={{ fontFamily: BLACK, fontWeight: 600, fontSize: 50, color: TXT2, opacity: ip, transform: `translateX(${((1 - ip) * 40).toFixed(1)}px)`, display: 'flex', alignItems: 'center', gap: 16 }}>
-                <span style={{ width: 12, height: 12, borderRadius: 3, background: '#78afff', boxShadow: '0 0 10px #78afff' }} />
-                {it}
-              </div>
-            );
-          })}
         </div>
       </div>
     </div>
@@ -462,15 +453,15 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
       <div style={{ position: 'absolute', left: 0, right: 0, top: 318 + OY, display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 30 }}>
           {[
-            { icon: 'phone', text: <><Blue>{PHONE}</Blue></>, size: 112, delay: 14 },
-            { icon: 'mail', text: <>info@risek-technology.com</>, size: 88, delay: 20 },
-            { icon: 'web', text: <>{WEB}</>, size: 88, delay: 26 },
+            { icon: 'phone', text: <><Blue>{PHONE}</Blue></>, size: 140, delay: 14 },
+            { icon: 'mail', text: <>info@risek-technology.com</>, size: 106, delay: 20 },
+            { icon: 'web', text: <>{WEB}</>, size: 106, delay: 26 },
           ].map((r) => (
             <div key={r.icon} style={{ display: 'flex', alignItems: 'center', gap: 34, ...rise(e(r.delay)) }}>
               <div
                 style={{
-                  width: 112,
-                  height: 112,
+                  width: 132,
+                  height: 132,
                   borderRadius: 99,
                   border: '3px solid rgba(120,175,255,0.75)',
                   display: 'flex',
@@ -480,14 +471,14 @@ const ContactCard: React.FC<{ from: number }> = ({ from }) => {
                   flexShrink: 0,
                 }}
               >
-                <ContactIcon name={r.icon} size={60} />
+                <ContactIcon name={r.icon} size={72} />
               </div>
               <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: r.size, lineHeight: 1, letterSpacing: '-0.015em', color: TXT, whiteSpace: 'nowrap' }}>{r.text}</div>
             </div>
           ))}
         </div>
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 790 + OY, textAlign: 'center', fontFamily: MONO, fontSize: 34, letterSpacing: '0.22em', color: LABEL, ...rise(e(32)) }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 820 + OY, textAlign: 'center', fontFamily: MONO, fontSize: 34, letterSpacing: '0.22em', color: LABEL, ...rise(e(32)) }}>
         KRAPINA · HRVATSKA
       </div>
     </div>
@@ -548,7 +539,7 @@ export const RisekLed: React.FC = () => {
 
         {/* 8–10 s: answer + logo */}
         <Slam from={240} to={270} out="zoom" style={{ alignItems: 'flex-start', paddingTop: 40 }}>
-          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 190, letterSpacing: '-0.04em', filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.8))' }}><Blue>Mi smo spremni.</Blue></div>
+          <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 232, letterSpacing: '-0.04em', filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.8))' }}><Blue>Mi smo spremni.</Blue></div>
         </Slam>
         {f >= 270 && f < 300 && (
           <AbsoluteFill style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(7,10,20,0.55), rgba(7,10,20,0.9) 100%)', opacity: logo2 * (1 - logo2q) }} />
@@ -585,7 +576,6 @@ export const RisekLed: React.FC = () => {
         <ContactCard from={720} />
       </div>
 
-      <Ticker />
       <Bar />
 
       {/* flashes on the three big moments (kept rare: no strobing on a street panel) */}
