@@ -130,7 +130,7 @@ const Bg: React.FC<{ src: string; from: number; to: number; trim?: number; opaci
 // cable helix from the site (spine_cables.mp4), at both edges, fading toward the centre
 const Cables: React.FC = () => {
   const f = useCurrentFrame();
-  const o = ramp(f, 0, 12, EASE.out) * (1 - ramp(f, 176, 12, EASE.exit));
+  const o = ramp(f, 0, 12, EASE.out) * (1 - ramp(f, 236, 12, EASE.exit));
   const col = (left: number, flip: boolean) => (
     <div style={{ position: 'absolute', left, top: 0, width: CW, height: AREA_H, opacity: 0.75 * o, transform: flip ? 'scaleX(-1)' : undefined, WebkitMaskImage: 'linear-gradient(90deg, #000 40%, transparent 100%)', maskImage: 'linear-gradient(90deg, #000 40%, transparent 100%)' }}>
       <OffthreadVideo src={staticFile('video/led/cables.mp4')} muted style={{ width: CW, height: AREA_H, display: 'block' }} />
@@ -148,7 +148,7 @@ const Cables: React.FC = () => {
 const Worker: React.FC = () => {
   const f = useCurrentFrame();
   const p = ramp(f, 4, 16, EASE.snappy);
-  const q = ramp(f, 236, 12, EASE.exit);
+  const q = ramp(f, 206, 12, EASE.exit);
   return (
     <div
       style={{
@@ -491,23 +491,23 @@ export const RisekLed: React.FC = () => {
   // intro logo
   const lp = ramp(f, 4, 12, EASE.snappy);
   const lq = ramp(f, 52, 8, EASE.exit);
-  const logo2 = ramp(f, 270, 12, EASE.snappy);
-  const logo2q = ramp(f, 292, 8, EASE.exit);
+  const logo2 = ramp(f, 330, 12, EASE.snappy);
+  const logo2q = ramp(f, 352, 8, EASE.exit);
   return (
     <AbsoluteFill style={{ background: C.bg, overflow: 'hidden' }}>
       {/* content area */}
       <div style={{ position: 'absolute', left: 0, top: 0, width: LED_W, height: AREA_H, overflow: 'hidden' }}>
         <Bg src="video/led/corridor.mp4" from={0} to={62} trim={232} opacity={0.75} />
-        <Bg src="video/led/corridor.mp4" from={56} to={244} trim={30} opacity={0.3} />
-        <Sequence from={56} durationInFrames={188} layout="none">
+        <Bg src="video/led/corridor.mp4" from={56} to={304} trim={30} opacity={0.3} />
+        <Sequence from={56} durationInFrames={248} layout="none">
           <Cables />
         </Sequence>
-        <Bg src="video/led/team.mp4" from={236} to={304} trim={0} opacity={0.62} />
-        <Bg src="video/led/risek-laptop.mp4" from={296} to={604} trim={0} opacity={0.14} rate={0.9} />
-        <Sequence from={296} durationInFrames={248} layout="none">
+        <Bg src="video/led/team.mp4" from={296} to={364} trim={0} opacity={0.62} />
+        <Bg src="video/led/risek-laptop.mp4" from={356} to={624} trim={0} opacity={0.14} rate={0.9} />
+        <Sequence from={356} durationInFrames={218} layout="none">
           <Worker />
         </Sequence>
-        <Bg src="video/led/risek-about-bg.mp4" from={596} to={724} trim={60} opacity={0.3} />
+        <Bg src="video/led/risek-about-bg.mp4" from={616} to={724} trim={60} opacity={0.3} />
         <Bg src="video/led/team.mp4" from={716} to={900} trim={40} opacity={0.3} rate={0.55} />
         <AbsoluteFill style={{ background: 'radial-gradient(ellipse 75% 70% at 50% 45%, rgba(7,10,20,0.15), rgba(7,10,20,0.85) 100%)' }} />
 
@@ -531,20 +531,22 @@ export const RisekLed: React.FC = () => {
           </div>
         )}
 
-        {/* 2–8 s: questions */}
-        <Q from={60} to={105} lines={[<>Računalo</>, <Blue>ne radi?</Blue>]} />
-        <Q from={105} to={150} lines={[<>Posao u firmi</>, <>još <Blue>na papiru?</Blue></>]} />
-        <Q from={150} to={195} lines={[<>Nemate</>, <Blue>web stranicu?</Blue>]} />
-        <Q from={195} to={240} lines={[<>Spremni za</>, <Blue>budućnost?</Blue>]} />
+        {/* 2–10 s: six questions, 40 f each */}
+        <Q from={60} to={100} lines={[<>Računalo</>, <Blue>ne radi?</Blue>]} />
+        <Q from={100} to={140} lines={[<>Posao u firmi</>, <>još <Blue>na papiru?</Blue></>]} />
+        <Q from={140} to={180} lines={[<>IT vam</>, <Blue>koči posao?</Blue>]} />
+        <Q from={180} to={220} lines={[<>Nemate</>, <Blue>web stranicu?</Blue>]} />
+        <Q from={220} to={260} lines={[<>Gubite vrijeme na</>, <Blue>papirologiju?</Blue>]} />
+        <Q from={260} to={300} lines={[<>Spremni za</>, <Blue>budućnost?</Blue>]} />
 
-        {/* 8–10 s: answer + logo */}
-        <Slam from={240} to={270} out="zoom" style={{ alignItems: 'flex-start', paddingTop: 40 }}>
+        {/* 10–12 s: answer + logo */}
+        <Slam from={300} to={330} out="zoom" style={{ alignItems: 'flex-start', paddingTop: 40 }}>
           <div style={{ fontFamily: BLACK, fontWeight: 900, fontSize: 232, letterSpacing: '-0.04em', filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.8))' }}><Blue>Mi smo spremni.</Blue></div>
         </Slam>
-        {f >= 270 && f < 300 && (
+        {f >= 330 && f < 360 && (
           <AbsoluteFill style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(7,10,20,0.55), rgba(7,10,20,0.9) 100%)', opacity: logo2 * (1 - logo2q) }} />
         )}
-        {f >= 270 && f < 300 && (
+        {f >= 330 && f < 360 && (
           <div
             style={{
               position: 'absolute',
@@ -557,20 +559,20 @@ export const RisekLed: React.FC = () => {
               filter: logo2 < 0.999 || logo2q > 0 ? `blur(${((1 - logo2) * 16 + logo2q * 12).toFixed(2)}px)` : undefined,
             }}
           >
-            <Sheen at={276} dur={18} mask="img/led/risek.png">
+            <Sheen at={336} dur={18} mask="img/led/risek.png">
               <Img src={staticFile('img/led/risek.png')} style={{ height: 520, display: 'block', filter: 'drop-shadow(0 0 40px rgba(120,175,255,0.45)) drop-shadow(0 10px 40px rgba(0,0,0,0.9))' }} />
             </Sheen>
           </div>
         )}
 
-        {/* 10–20 s: services one by one, then all six */}
+        {/* 12–21 s: services one by one, then all six */}
         {SERVICES.map((_, i) => (
-          <ServiceOne key={i} i={i} from={300 + i * 40} to={300 + (i + 1) * 40} />
+          <ServiceOne key={i} i={i} from={360 + i * 35} to={360 + (i + 1) * 35} />
         ))}
-        <ServiceGrid from={540} to={602} />
+        <ServiceGrid from={570} to={622} />
 
-        {/* 20–24 s: trust */}
-        <Trust from={600} to={720} />
+        {/* 21–24 s: trust */}
+        <Trust from={620} to={720} />
 
         {/* 24–30 s: contact */}
         <ContactCard from={720} />
@@ -580,8 +582,8 @@ export const RisekLed: React.FC = () => {
 
       {/* flashes on the three big moments (kept rare: no strobing on a street panel) */}
       <Flash at={0} strength={0.9} />
-      <Flash at={240} strength={0.55} />
-      <Flash at={270} strength={0.7} />
+      <Flash at={300} strength={0.55} />
+      <Flash at={330} strength={0.7} />
     </AbsoluteFill>
   );
 };
